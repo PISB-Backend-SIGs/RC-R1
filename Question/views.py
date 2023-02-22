@@ -8,8 +8,9 @@ def QuestionView(request):
     context = { }
     ruser = request.user
     profile = Profile.objects.get(user=ruser)
-    print(profile)
     if request.method == "POST":
+        profile.curr_question=profile.curr_question+1
+        profile.save()
         question1 = Question.objects.get(question_no=profile.curr_question)
         context["question"]=question1.question
     else:
