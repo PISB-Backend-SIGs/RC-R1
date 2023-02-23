@@ -22,8 +22,8 @@
     <h3>QUESTION</h3>
 
     {% if user.is_authenticated %} 
-    <h3>Hello {{ request.user.first_name }}</h3>
-    <h4>Logged in successfully. Question will be displayed here. For now question.html</h4>
+    <h3>Question - {{ currquest }}</h3>
+    <!-- <h4>Logged in successfully. Question will be displayed here. For now question.html</h4> -->
    
 
     <form method="POST" action="{% url 'Question' %}">
@@ -34,14 +34,18 @@
     
     <p>{{question}}</p>
 
-    <button type="submit">Submit<br></button>
     
     <!-- <button type="submit"><a hr    ef ="/signout">Signout</a></button><br> -->
 
     {% else %} 
     <a href="/signin"></a>
     {% endif %}
+    
+    <!-- <input type="number" name="res1" id="res1" required ><br> -->
+    <!-- <button type="submit">Submit<br></button><br> -->
 
+    <input type="number" name="res1" id="res1" required><br>
+    <button type="submit">Submit<br></button><br>
    
     </form> 
     <script src="" async defer></script>

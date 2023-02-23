@@ -6,6 +6,9 @@ from django.contrib import messages  # to display messagess after the the user h
 from django.shortcuts import redirect, render #to use the 'redirect' function in line 28
 from django.contrib.auth import login,authenticate, logout  #refer line 39, 42
 import re
+import numpy as np
+import random
+from Question.models import Question
 
 def home(request):
     return render(request, "myapp_RC/register.html")
@@ -65,6 +68,21 @@ def signin(request):
         if user is not None:
             login(request, user)
             fname = user.first_name
+
+            # =====================
+            
+            allQues = Question.objects.all()
+            queIndex = np.arange(1, len(allQues)).tolist()
+            random.shuffle(queIndex)
+
+            queIndex = queIndex[:11]
+
+            profile = Profile.objects.get(user = user)
+
+            profile.questionIndexList = str(queIndex)
+            profile.save()
+            print(queIndex)
+            
             return render(request, "myapp_RC/instruction.html")
 
         else:
