@@ -42,16 +42,16 @@ def signup(request):
             messages.error(request,"Password should contain atleast one Special character")
         elif mobno.isnumeric() == False or len(mobno) != 10 :
             messages.error(request,"Enter a valid Mobile number")
+        else :    
+            myuser=User.objects.create_user(username=nusername, password=pass1, email=nemail)
+            myuser.first_name = fname
+            myuser.last_name = lname
+            myuser.save()
             
-        myuser=User.objects.create_user(username=nusername, password=pass1, email=nemail)
-        myuser.first_name = fname
-        myuser.last_name = lname
-        myuser.save()
-        
-        newuserprofile=Profile(user=myuser,mob_no=mobno)
-        newuserprofile.save()
+            newuserprofile=Profile(user=myuser,mob_no=mobno)
+            newuserprofile.save()
 
-        messages.success(request, "Your account has been successfully created!")
+            messages.success(request, "Your account has been successfully created!")
 
         return redirect('/signin')   # to redirect the user to the signin page once the successful registration messages is displayed
     

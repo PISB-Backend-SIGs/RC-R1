@@ -5,7 +5,7 @@ from myapp_RC.models import *
 class Question(models.Model):
     question_no = models.IntegerField()    
     question=models.CharField(max_length=1000)
-    answer=models.IntegerField()
+    answer=models.IntegerField(default=-1)
     
     def __str__(self):
         return self.question

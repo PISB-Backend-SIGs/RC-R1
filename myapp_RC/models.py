@@ -7,6 +7,6 @@ class Profile(models.Model):
     questionIndexList = models.TextField(default="[-1]")
     quesno = models.IntegerField(default=1)
     mob_no = models.CharField(max_length=12)
-    
+    marks = models.IntegerField(default=0)
     def __str__(self):
         return self.user.first_name
