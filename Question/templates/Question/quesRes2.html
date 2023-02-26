@@ -24,32 +24,28 @@
     {% if user.is_authenticated %} 
     <h3>Question Number: {{ currquestNum }}</h3>
     <h3>Question: {{ currquest }}</h3>
-    <!-- <h4>Logged in successfully. Question will be displayed here. For now question.html</h4> -->
    
 
     <form method="POST" action="{% url 'Question' %}">
         {% csrf_token %}
+
         {% for newmessage in question %}
         <p>{{newmessage.question}}</p>
         {% endfor %}
 
-    <p>MARKS = {{marks }}</p>
+        <p>MARKS = {{marks }}</p>
 
-    
-    <!-- <button type="submit"><a hr    ef ="/signout">Signout</a></button><br> -->
 
-    {% else %} 
-    <a href="/signin"></a>
-    {% endif %}
-    
-    <input type="number" name="res1" id="res1" ><br>
-    <button type="submit">Submit<br></button><br>
+        {% else %} 
+        <a href="/signin"></a>
+        {% endif %}
+        
+        <input type="number" name="res1" id="res1" placeholder = {{ hint }} disabled> <br>
+        <input type="number" name="res2" id="res2" required> <br>
 
-    <input type="number" name="res2" id="res2"><br>
-    <button type="submit">Submit<br></button><br>
+        <button type="submit">Submit</button>
    
     </form> 
-    <!-- <script src="" async defer></script> -->
     
     <script type="text/javascript">
         if (!!window.performance && window.performance.navigation.type === 2) {

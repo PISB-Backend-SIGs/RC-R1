@@ -80,9 +80,11 @@ def signin(request):
             profile = Profile.objects.get(user = user)
 
             profile.questionIndexList = str(queIndex)
+
+            print("QUESTION INDEXES: ",queIndex)
+
             profile.save()
-            print(queIndex)
-            
+            # =====================
             return render(request, "myapp_RC/instruction.html")
 
         else:

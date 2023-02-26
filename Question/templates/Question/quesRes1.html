@@ -29,24 +29,23 @@
 
     <form method="POST" action="{% url 'Question' %}">
         {% csrf_token %}
+
         {% for newmessage in question %}
         <p>{{newmessage.question}}</p>
         {% endfor %}
 
-    <p>MARKS = {{marks }}</p>
+        <p>MARKS = {{marks }}</p>
 
-    
-    <!-- <button type="submit"><a hr    ef ="/signout">Signout</a></button><br> -->
+        {% else %} 
+        <a href="/signin"></a>
+        {% endif %}
 
-    {% else %} 
-    <a href="/signin"></a>
-    {% endif %}
-    
-    <input type="number" name="res1" id="res1" ><br>
-    <button type="submit">Submit<br></button><br>
+        <p>TRY STATUS = {{tryStatus}}</p>
 
-    <input type="number" name="res2" id="res2"><br>
-    <button type="submit">Submit<br></button><br>
+        <input type="number" name="res1" id="res1" required><br>
+        <input type="number" name="res2" id="res2" disabled><br>
+
+        <button type="submit">Submit<br></button><br>
    
     </form> 
     <!-- <script src="" async defer></script> -->

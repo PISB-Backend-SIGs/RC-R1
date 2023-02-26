@@ -11,65 +11,150 @@ def QuestionView(request):
     ruser = request.user
     profile = Profile.objects.get(user = ruser)
 
-    context['currquest'] = profile.quesno
+    context['currquestNum'] = profile.quesno
     
-    
-   
-    if profile.quesno < 10:
-    
-        if request.method == "POST":
+    if request.method == "POST":
+        # Post Request
+        # MAKE SURE THAT WHE NYOU CREATE PROFILE THE QUESTION NUMBER IS SET TO 0
+        # MARKS ALSO SET TO 0
+        if profile.quesno == 0:
+            # First Question
             profile.quesno += 1
-            profile.save()
-            question1 = Question.objects.get(question_no=eval(profile.questionIndexList)[profile.quesno])
-            context["question"]=question1.question
-            res1 = request.POST['res1']
-            # ===================================================
-            res2 = request.POST['res2']
-            # print(type(res2), type(res1))
-
-            responsesUser = User_Response.objects.filter(user_profile = profile)
-            responsesUser = responsesUser[len(responsesUser)-1]
-
-            print("Correct: ",Question.objects.get(question_no=eval(profile.questionIndexList)[profile.quesno - 1]).answer, "You: ", res1)
-
-            if responsesUser.response1 != None:
-                
-                if str(res1) == str(Question.objects.get(question_no=eval(profile.questionIndexList)[profile.quesno - 1]).answer):
-
-                    profile.marks += 4
-                
-                else:
-                    profile.marks -= 2  
-                
-                    # Redenr taka koni tari pls sos
-
-
-
-            elif responsesUser.response2 == None:
-
-                if str(res2) == str(Question.objects.get(question_no=eval(profile.questionIndexList)[profile.quesno - 1]).answer):
-                    profile.marks += 2
-                
-                else:
-                    profile.marks -= 2
-                
-                # Ethe pan render page kara koni tari pls Ansh SOS bro pls HELP
-            # ===================================================
-            profile.save()
+            context["currquestNum"] = profile.quesno
+            
+            sendQuestion = Question.objects.get(question_no=eval(profile.questionIndexList)[profile.quesno])
+            context["currquest"]=sendQuestion.question
 
             context["marks"] = profile.marks
 
-            respo = User_Response(user=ruser,user_profile=profile,response1 = int(res1),response2 = int(res2), quetionID = eval(profile.questionIndexList)[profile.quesno - 1])
-            respo.save()
-            
-            
-        elif request.method == "GET":
-            question1 = Question.objects.get(question_no=eval(profile.questionIndexList)[profile.quesno])
-            context["question"]=question1.question
+            profile.save()
 
-        else :
-            return render(request, "Question/error.html",context)
+            return render(request, "Question/question.html",context)
+        
+        elif profile.quesno < len(eval(profile.questionIndexList)) - 1:
+            # Second Question to Last Question
+            checkQuestionIndex = profile.quesno
+            
+            # Question Checking part begin 
+            checkQuestion = Question.objects.get(question_no=eval(profile.questionIndexList)[checkQuestionIndex])
+            correctSol = checkQuestion.answer
 
-        return render(request, "Question/question.html",context)
+            if profile.isFirstTry == True:
+                givenSol = request.POST['res1']
+                if str(givenSol) == str(correctSol):
+                    profile.marks += 4
+
+                else:
+                    profile.marks -= 2
+                    profile.isFirstTry = False
+
+                    profile.save()
+
+                    # RENDERING THE SECOND ATTEMPT PAGE
+                    
+                    context["hint"] = givenSol
+
+                    currentQuesNum = profile.quesno
+
+                    context["currquestNum"] = currentQuesNum
+
+                    sendQuestion = Question.objects.get(question_no=eval(profile.questionIndexList)[currentQuesNum])
+                    context["currquest"]=sendQuestion.question
+
+                    context["marks"] = profile.marks
+
+                    return render(request, "Question/quesRes2.html",context)
+
+            
+            elif profile.isFirstTry == False:
+
+                profile.isFirstTry = True
+                profile.save()
+
+                givenSol = request.POST['res2']
+
+                if str(givenSol) == str(correctSol):
+                    profile.marks += 4
+                else:
+                    profile.marks -= 2
+            
+            else:
+
+                profile.isFirstTry = True
+                profile.save()    
+
+                # RENDER THE ERRORS PAGE
+                pass 
+
+            # Question Checking part complete
+
+            # Next Question Part begin
+
+            profile.quesno += 1
+            currentQuesNum = profile.quesno
+
+            context["currquestNum"] = currentQuesNum
+
+            sendQuestion = Question.objects.get(question_no=eval(profile.questionIndexList)[currentQuesNum])
+            context["currquest"]=sendQuestion.question
+
+            context["marks"] = profile.marks
+            # Next Question Part complete
+
+            profile.save()
+
+            return render(request, "Question/quesRes1.html",context)
+        
+        else:
+            # Last question over so checking it then rendering result
+            checkQuestionIndex = profile.quesno
+            
+            # Question Checking part begin 
+            
+            checkQuestion = Question.objects.get(question_no=eval(profile.questionIndexList)[checkQuestionIndex])
+            correctSol = checkQuestion.answer
+
+            if profile.isFirstTry == True:
+                givenSol = request.POST['res1']
+
+                if str(givenSol) == str(correctSol):
+                    profile.marks += 4
+
+                else:
+                    profile.marks -= 2
+
+            else:
+                givenSol = request.POST['res2']
+
+                if str(givenSol) == str(correctSol):
+                    profile.marks += 4
+
+                else:
+                    profile.marks -= 2
+
+            # Question Checking part begin 
+
+            context["marks"] = profile.marks
+            profile.save()
+
+            return render(request, "Question/result.html",context)
+        
+    elif request.method == "GET":
+        # Get Request
+        # NEED TO FIX THIS PART
+
+        # OPTION 1: SIMPLY MAKE THE REQUEST IN THE INSTRUCTION PAGE POST
+        # OPTION 2: MAKE ANOTHER PAGE FOR THIS PART
+
+        #==============================USE THIS==========================================
+        # context["marks"] = "GET REQUEST"
+        # return render(request, "Question/quesRes1.html",context)
+
+        #==============================THIS IS FOR TESTING===============================
+        context["tryStatus"] = "First Attempt"
+        context["hint"] = -1
+        return render(request, "Question/quesRes1.html",context)
+
     else:
-        return render(request, "Question/result.html", context)
+        # Send Errors!!
+        return render(request, "Question/error.html",context)
