@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Result</title>
+    <meta name="description" content = "">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href = "">
+</head>
+<body>
+    <h1>Result</h1>
+    <h3>{{ marks }}</h3>
+    <a href ="{% url 'SignOut' %}">Log Out</a><br>
+    <script src="" async defer></script>
+    <table>
+        <tr>
+        <th>Rank</th>  
+        <th>User</th>  
+        <th>Attempted Question</th>
+        <th>Marks</th>  
+        </tr>
+        {% for userprofiles in users %}
+        <tr>
+        <td>1</td>  
+        <td>{ userprofile.user }</td>  
+        <td>{ userprofile.quesno }</td>  
+        <td>{ userprofile.marks }</td>  
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
