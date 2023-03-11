@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Authentication</title>
+    <meta name="description" content = "">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href = "">
+</head>
+<body>
+
+    {% for message in messages %} 
+    <div class = "alert alert -{{ message.tags }} alert-dismissible fade show" role = "alert">
+        <strong>Message:</strong> {{ message }}
+            <button type = "button" class = "close" data-dismiss = "alert" aria-label = "Close">
+                <span aria-hidden = "true">×</span>
+            </button>
+    </div>
+    {% endfor %}
+
+    <h3>QUESTION</h3>
+
+    {% if user.is_authenticated %} 
+    <h3>Question Number: {{ currquestNum }}</h3>
+    <h3>Question: {{ currquest }}</h3>
+    <!-- <h4>Logged in successfully. Question will be displayed here. For now question.html</h4> -->
+   
+
+    <form method="POST" action="{% url 'Question' %}">
+        {% csrf_token %}
+
+        {% for newmessage in question %}
+        <p>{{newmessage.question}}</p>
+        {% endfor %}
+
+        <p>MARKS = {{marks }}</p>
+
+        {% else %} 
+        <a href="/signin"></a>
+        {% endif %}
+
+        <p>TRY STATUS = {{tryStatus}}</p>
+
+        <input type="number" name="res1" id="res1" required><br>
+        <input type="number" name="res2" id="res2" disabled><br>
+
+        <button type="submit">Submit<br></button><br>
+   
+    </form> 
+    <!-- <script src="" async defer></script> -->
+    
+    <script type="text/javascript">
+        window.history.forward();
+        function noBack() {
+            window.history.forward();
+        }
+    </script>
+</body>
+</html>
