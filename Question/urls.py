@@ -4,6 +4,6 @@ from . import views
 
 urlpatterns = [
     path('question/', views.QuestionView, name = 'QuestionView1'),
-    path('result/', views.result, name = 'Result'),
+    path('result/', views.leaderboard, name = 'Result'),
 ]
 

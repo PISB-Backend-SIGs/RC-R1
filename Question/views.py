@@ -6,7 +6,7 @@ from Question.models import *
 from myapp_RC.models import Profile
 from datetime import datetime
 import datetime
-
+from itertools import groupby
 
 # @login_required(login_url = 'signin')
 def QuestionView(request):
@@ -38,68 +38,73 @@ def QuestionView(request):
     print("SYS TIME",n1)
     print("SERVER TIME:",n2)
     print(n3.seconds)
-    # context["res1"] = 10
 
-    context["min1"] = 10 - n3.seconds//60
-    context["second1"] = n3.seconds%60
+    context["min1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds // 60
+    context["second1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds % 60
     
     print("context",context)
     
+    if profile.isFirstTry == False :
+        context["resp1"] = User_Response.objects.get(user = ruser, user_profile = profile, quetionID = qList[0]).response1
+    
     if profile.quesno == 11 :
-        return redirect('/result')
+        profile.remainingTime = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
+        profile.save()
+        return redirect('Result')
         
     if request.method == "POST":
-            print("In Post")
-            
-            qList = eval(profile.questionIndexList)
-            if profile.isFirstTry:
-                givenAns = request.POST["res1"]
+        print("In Post")
+        
+        qList = eval(profile.questionIndexList)
+        if profile.isFirstTry:
+            givenAns = request.POST["res1"]
 
-                print("first attempt")
-                tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user)
-                tempSol.save()
-                # print("DIS--------------------", qList[0])
+            print("first attempt")
+            tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user)
+            tempSol.save()
+            # print("DIS--------------------", qList[0])
 
-                if str(givenAns) == str(currQues.answer):
-                    print("first correct")
-                    profile.marks += 4
-                    profile.quesno += 1
-                    profile.isFirstTry = True
-                    profile.questionIndexList = str(qList[1:])
-                
-                else:
-                    # CHANGE BACK
-                    profile.isFirstTry = False
-                
-                
-
-            elif profile.isFirstTry == False:
-
-                givenAns = request.POST["res2"]
-                tempSol = User_Response.objects.get(user = profile.user, user_profile = profile, quetionID = qList[0])
-                tempSol.response2 = givenAns
-                tempSol.save()
-                context["resp1"] = tempSol.response1
-                if str(givenAns) == str(currQues.answer):
-                    
-                    print("YOUR ANSWER:", givenAns)
-                    print("CORRECT: ", currQues.answer)
-                    profile.marks += 2
-
-                else:
-                    profile.marks -= 2
-
-                
+            if str(givenAns) == str(currQues.answer):
+                print("first correct")
+                profile.marks += 4
                 profile.quesno += 1
                 profile.isFirstTry = True
-                qList = eval(profile.questionIndexList)
                 profile.questionIndexList = str(qList[1:])
-                
-            profile.save()
-            print("Profile Saved")
-            request.method = "GET"
-            return QuestionView(request)
+            
+            else:
+                # CHANGE BACK
+                profile.isFirstTry = False   
+            
 
+        elif profile.isFirstTry == False:
+
+            givenAns = request.POST["res2"]
+            tempSol = User_Response.objects.get(user = profile.user, user_profile = profile, quetionID = qList[0])
+            tempSol.response2 = givenAns
+            tempSol.save()
+            
+            if str(givenAns) == str(currQues.answer):
+                
+                print("YOUR ANSWER:", givenAns)
+                print("CORRECT: ", currQues.answer)
+                profile.marks += 2
+
+            else:
+                profile.marks -= 2
+
+            
+            profile.quesno += 1
+            profile.isFirstTry = True
+            qList = eval(profile.questionIndexList)
+            profile.questionIndexList = str(qList[1:])
+            
+        profile.save()
+        print("Profile Saved")
+        request.method = "GET"
+        return QuestionView(request)
+    
+    else:
+        print(context)
     return render(request, 'Question/question.html', context)
 
 
@@ -116,11 +121,10 @@ def computeContext(user):
 def leaderboard(request) :
     context = {}
     ruser = request.user
+
     profile = Profile.objects.get(user = ruser)
     context["marks"] = profile.marks
-    context["users"] = Profile.objects.all()
-    
-    return render(request, 'Question/result.html', context)
 
-def result(request):
-    return render(request, 'Question/result.html')
+    context["users"] = list(Profile.objects.all().order_by('marks',"remainingTime").reverse())
+    context["rank"] = context["users"].index(profile) + 1
+    return render(request, 'Question/result.html', context)

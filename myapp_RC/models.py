@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True,)
 
+    user_rank = models.IntegerField(default=1, null=True)
+
     curr_question=models.IntegerField(default=1)
     questionIndexList = models.TextField(default="[-1]")
 
@@ -19,6 +21,8 @@ class Profile(models.Model):
     startTime = models.DateTimeField(default = datetime.now())
     tempTime = models.DateTimeField(default = datetime.now())
     totalTime = models.IntegerField(default=-1)
+
+    remainingTime = models.IntegerField(default= -1)
 
     def __str__(self):
         return self.user.username
