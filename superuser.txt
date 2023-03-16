@@ -1,0 +1,12 @@
+superuser-->
+username - admin
+password - password
+email - tanmaydeo2003gmail.com
+
+user -->
+username = omed123
+password = omed@123
+
+user-->
+username = blank
+password = 12345
