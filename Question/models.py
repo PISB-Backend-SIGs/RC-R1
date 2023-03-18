@@ -17,6 +17,8 @@ class User_Response(models.Model):
     response1 = models.CharField(null = True,max_length=1000)
     response2 = models.CharField(null = True,max_length=1000)
 
+    isSimpleQuestion = models.BooleanField(default=False)
+
     def __str__(self):
         return self.user.username
 

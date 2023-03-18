@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from myapp_RC.models import Profile
@@ -48,7 +49,7 @@ def signup(request):
             myuser.last_name = lname
             myuser.save()
             
-            newuserprofile=Profile(user=myuser,mob_no=mobno)
+            newuserprofile=Profile(user = myuser, mob_no = mobno, remainingTime = datetime.timedelta(minutes=30))
             newuserprofile.save()
 
             messages.success(request, "Your account has been successfully created!")
@@ -79,8 +80,9 @@ def signin(request):
 
             profile = Profile.objects.get(user = user)
 
+            profile.startTime = datetime.datetime.now()
+            
             profile.questionIndexList = str(queIndex)
-
             profile.save()
             # =====================
             return render(request, "myapp_RC/instruction.html")

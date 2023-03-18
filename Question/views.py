@@ -24,17 +24,19 @@ def QuestionView(request):
     
     context["currquest"] = currQues.question
     # print("currQues.question",currQues.question)
-    context["isFirstTry"] = profile.isFirstTry
+    # context["isFirstTry"] = profile.isFirstTry
+    context["profile"] = profile
     context["res10"] = str(10)
-    context["marks"] = profile.marks
+    # context["marks"] = profile.marks
+    context["easyQuestion"] = False
     
 
-    dt_str = str(profile.startTime)
-    n1 = datetime.datetime.fromisoformat(dt_str)
-    n1 = n1.replace(tzinfo=None)
+    # dt_str = str(profile.startTime)
+    # n1 = datetime.datetime.fromisoformat(dt_str)
+    # n1 = n1.replace(tzinfo=None)
 
-    n2 = datetime.datetime.now()
-    n3 = n2 - n1
+    # n2 = datetime.datetime.now()
+    # n3 = n2 - n1
     
     # print("SYS TIME",n1)
     # print("SERVER TIME:",n2)
@@ -43,13 +45,20 @@ def QuestionView(request):
     context["min1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds // 60
     context["second1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds % 60
     
+    # context["min1"] = profile.remainingTime.seconds // 60
+    # context["second1"] = profile.remainingTime.seconds % 60
+    # profile.remainingTime -= (datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))
+    
     # print("context",context)
+
+    if profile.lifeline1_count == 3 and profile.simpleQuestionUsed == False:
+        profile.lifeline1_status = True
     
     if profile.isFirstTry == False :
-        context["resp1"] = User_Response.objects.get(user = ruser, user_profile = profile, quetionID = qList[0]).response1
+        context["resp1"] = User_Response.objects.get(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).response1
     
     if profile.quesno == 11 :
-        profile.remainingTime = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
+        profile.remainingTime -= (datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))
         profile.save()
         return redirect('Result')
         
@@ -61,7 +70,7 @@ def QuestionView(request):
             givenAns = request.POST["res1"]
 
             # print("first attempt")
-            tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user)
+            tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user, isSimpleQuestion = False)
             tempSol.save()
             # print("DIS--------------------", qList[0])
 
@@ -71,6 +80,8 @@ def QuestionView(request):
                 profile.quesno += 1
                 profile.isFirstTry = True
                 profile.questionIndexList = str(qList[1:])
+                if profile.lifeline1_count < 3 :
+                    profile.lifeline1_count += 1
             
             else:
                 # CHANGE BACK
@@ -80,7 +91,7 @@ def QuestionView(request):
         elif profile.isFirstTry == False:
 
             givenAns = request.POST["res2"]
-            tempSol = User_Response.objects.get(user = profile.user, user_profile = profile, quetionID = qList[0])
+            tempSol = User_Response.objects.get(user = profile.user, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False)
             tempSol.response2 = givenAns
             tempSol.save()
             
@@ -122,16 +133,66 @@ def leaderboard(request) :
     ruser = request.user
 
     profile = Profile.objects.get(user = ruser)
-    context["marks"] = profile.marks
+    context["profile"] = profile
 
     context["users"] = list(Profile.objects.all().order_by('marks',"remainingTime").reverse())
     context["rank"] = context["users"].index(profile) + 1
     return render(request, 'Question/result.html', context)
 
-def lifelineone(request) :
-    if request.method == "GET" :
-        context = {}
-        ruser = request.user
-        profile = Profile.objects.get(user = ruser)
-        question = EasyQuestion.objects.all()
-        print(question)
+def lifelineone(request):
+    print("In Lifeline one")
+    context = { }
+    ruser = request.user
+    profile = Profile.objects.get(user = ruser)
+
+    profile.lifeline1_status = False
+    profile.simpleQuestionUsed = True
+    qList = eval(profile.questionIndexList)
+
+    context['currquestNum'] = profile.quesno
+
+    currQueslist = EasyQuestion.objects.all()
+
+    currQuest = currQueslist[random.randrange(len(currQueslist))]
+
+    context["currquest"] = currQuest.easyquestion
+    context["profile"] = profile
+    # context["isFirstTry"] = profile.isFirstTry
+    context["res10"] = str(10)
+    # context["marks"] = profile.marks
+
+    context["min1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds // 60
+    context["second1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds % 60
+    
+       
+    if profile.quesno == 11 :
+        profile.remainingTime -= (datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))
+        profile.save()
+        return redirect('Result')
+
+    if not profile.simpleQuestionUsed: 
+        print("In firt if statement")
+        profile.simpleQuestionUsed = True
+        
+        if request.method == "GET":
+            print("In lifeline GET")
+            givenAns = request.GET["res1"]
+
+            tempSol = User_Response(user_profile = profile, quetionID = currQuest.easyquestion_no, response1 = givenAns, user = profile.user, isSimpleQuestion = True)
+            tempSol.save()
+
+            if str(givenAns) == str(currQuest.easyanswer):
+                profile.marks += 4
+            else:
+                profile.marks -= 4
+            
+            
+            profile.quesno += 1
+            profile.questionIndexList = str(qList[1:])
+            profile.isFirstTry = True
+                
+            profile.save()
+            request.method = "POST"
+            return QuestionView(request)
+    
+    return render(request, 'Question/question.html', context)

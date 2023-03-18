@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -20,11 +20,16 @@ class Profile(models.Model):
 
     startTime = models.DateTimeField(null = True)
     tempTime = models.DateTimeField(null = True)
-    totalTime = models.IntegerField(default=-1)
 
-    lifeline_1 = models.BooleanField(default=False)
+    # totalTime = 
 
-    remainingTime = models.IntegerField(default= -1)
+    simpleQuestionUsed = models.BooleanField(default=False)
+    timeLLUsed = models.BooleanField(default=False)
+    remainingTime = models.DurationField()
+
+    # lifeline one
+    lifeline1_count = models.IntegerField(default=0)
+    lifeline1_status = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username

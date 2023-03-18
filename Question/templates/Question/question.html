@@ -6,7 +6,7 @@
     <title>Authentication</title>
     <meta name="description" content = "">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href = "">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 <body>
 
@@ -21,22 +21,26 @@
 
     <h3>QUESTION</h3>
 
-    <h3>Question Number: {{ currquestNum }}</h3>
+    <h3>Question Number: {{ profile.quesno }}</h3>
     <h3>Question: {{ currquest }}</h3>
     <!-- <h4>Logged in successfully. Question will be displayed here. For now question.html</h4> -->
    
-
+    {% if not easyQuestion%}
     <form method="POST" action="{% url 'QuestionView1' %}" name="name1">
+    {% else %}  
+    <form method="POST" action="{% url 'lifeline1' %}" name="name1">
+    {% endif %}
+
         {% csrf_token %}
 
-    <p>MARKS = {{ marks }}</p>
+    <p>MARKS = {{ profile.marks }}</p>
 
     
     <!-- <button type="submit"><a hr    ef ="/signout">Signout</a></button><br> -->
 
 
 
-    {% if isFirstTry%}
+    {% if profile.isFirstTry%}
         <input type="number" name="res1" id="res1" required><br>
         <!-- <button type="submit">Submit<br></button><br> -->
 
@@ -53,12 +57,17 @@
 
     {% endif %}
 
-    <button type="button" href="#" onclick="lifeline1()">Lifeline 1<br></button><br>
+    <!-- <button type="button" href="#" onclick="lifeline1()">Lifeline 1<br></button><br> -->
     </form> 
+    {% if profile.lifeline1_status %}
+    <a href="/lifeline1/"><button>Simple Question</button></a>
+    {% endif %}
     <!-- <script src="" async defer></script> -->
     <p id="timer"></p>
+    <div id="myBar" class="w3-container w3-green" style="width:20%">{{profile.lifeline1_count}}</div>
 </body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"> -->
+  <script>
     document.getElementById('timer').innerHTML =
       {{min1}} + ":" + {{second1}}
     startTimer();
@@ -89,14 +98,5 @@
       return sec;
     }
 
-    function lifeline1(){
-      $.ajax({
-        url: "{% url 'lifelinefirst' %}",
-        type: "GET",
-            data: {
-        },
-
-      });
-    }
     </script>
 </html>
