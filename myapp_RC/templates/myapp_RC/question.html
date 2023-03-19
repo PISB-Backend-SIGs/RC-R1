@@ -60,7 +60,7 @@
     <!-- <button type="button" href="#" onclick="lifeline1()">Lifeline 1<br></button><br> -->
     </form> 
     {% if profile.lifeline1_status %}
-    <a href="/lifeline1/"><button>Simple Question</button></a>
+    <a href="{% url 'lifeline1' %}"><button>Simple Question</button></a>
     {% endif %}
     <!-- <script src="" async defer></script> -->
     <p id="timer"></p>

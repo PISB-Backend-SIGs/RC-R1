@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'Question.apps.QuestionConfig',
     'myapp_RC.apps.myapp_RCConfig',
     'django.contrib.admin',
     'django.contrib.auth',
