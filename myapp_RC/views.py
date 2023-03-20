@@ -1,4 +1,3 @@
-import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from myapp_RC.models import *
@@ -9,6 +8,7 @@ from django.contrib.auth import login,authenticate, logout  #refer line 39, 42
 import re
 import numpy as np
 import random
+import datetime
 
 def home(request):
     return render(request, "myapp_RC/register.html")
@@ -47,7 +47,6 @@ def signup(request):
             myuser.first_name = fname
             myuser.last_name = lname
             myuser.save()
-            
             newuserprofile=Profile(user = myuser, mob_no = mobno, remainingTime = datetime.timedelta(minutes=30))
             newuserprofile.save()
 
@@ -100,7 +99,7 @@ def signout(request):
 
 def instruction(request):
     if request.method == 'POST':
-        return render(request, "Question/question.html")
+        return render(request, "myapp_RC/question.html")
     return render(request,"myapp_RC/instruction.html")
 
 
@@ -210,7 +209,7 @@ def QuestionView(request):
         request.method = "GET"
         return QuestionView(request)
     
-    return render(request, 'Question/question.html', context)
+    return render(request, 'myapp_RC/question.html', context)
 
 
 def computeContext(user):
@@ -234,16 +233,18 @@ def leaderboard(request) :
     context["rank"] = context["users"].index(profile) + 1
     profile.user_rank = context["rank"]
     profile.save()
-    return render(request, 'Question/result.html', context)
+    return render(request, 'myapp_RC/result.html', context)
 
 def lifelineone(request):
-    print("In Lifeline one")
+    # print("In Lifeline one")
     context = { }
     ruser = request.user
     profile = Profile.objects.get(user = ruser)
 
+    profile.lifeline1_count = 0
     profile.lifeline1_status = False
     profile.simpleQuestionUsed = True
+
     qList = eval(profile.questionIndexList)
 
     context['currquestNum'] = profile.quesno
@@ -255,7 +256,6 @@ def lifelineone(request):
     context["currquest"] = currQuest.easyquestion
     context["profile"] = profile
     # context["isFirstTry"] = profile.isFirstTry
-    context["res10"] = str(10)
     # context["marks"] = profile.marks
 
     context["min1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds // 60
@@ -266,31 +266,27 @@ def lifelineone(request):
         profile.remainingTime -= (datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))
         profile.save()
         return redirect('Result')
-
-    if not profile.simpleQuestionUsed: 
-        print("In firt if statement")
-        profile.simpleQuestionUsed = True
-        profile.isFirstTry = True
-        profile.lifeline1_count = 0
-
-        if request.method == "GET":
-            print("In lifeline GET")
-            givenAns = request.GET["res1"]
-
-            tempSol = User_Response(user_profile = profile, quetionID = currQuest.easyquestion_no, response1 = givenAns, user = profile.user, isSimpleQuestion = True)
-            tempSol.save()
-
-            if str(givenAns) == str(currQuest.easyanswer):
-                profile.marks += 4
-            else:
-                profile.marks -= 4
-            
-            
-            profile.quesno += 1
-            profile.questionIndexList = str(qList[1:])
-                
-            profile.save()
-            request.method = "POST"
-            return QuestionView(request)
     
-    return render(request, 'Question/question.html', context)
+    if request.method == "POST":
+    
+        print("In lifeline POST")
+        givenAns = request.GET["res1"]
+
+        tempSol = User_Response(user_profile = profile, quetionID = currQuest.easyquestion_no, response1 = givenAns, user = profile.user, isSimpleQuestion = True)
+        tempSol.save()
+
+        if str(givenAns) == str(currQuest.easyanswer):
+            profile.marks += 4
+        else:
+            profile.marks -= 4
+        
+        
+        profile.quesno += 1
+        profile.questionIndexList = str(qList[1:])
+            
+        profile.save()
+    else :
+        request.method = 'POST'
+        return redirect('lifelineone')
+    
+    return render(request, 'myapp_RC/question.html', context)
