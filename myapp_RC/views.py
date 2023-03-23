@@ -105,6 +105,7 @@ def instruction(request):
 
 # @login_required(login_url = 'signin')
 def QuestionView(request):
+    
     # print("In Questionview")
     context = { }
     ruser = request.user
@@ -112,7 +113,7 @@ def QuestionView(request):
     # print("QNUM",profile.quesno)    
     context['currquestNum'] = profile.quesno
     qList = eval(profile.questionIndexList)
-    
+
     # print("currquestion here: ",qList)
     currQues = Question.objects.get(question_no=qList[0])
     
@@ -153,7 +154,7 @@ def QuestionView(request):
         return redirect('Result')
     print("====")
     if request.method == "POST":
-        
+        print("Checked Status: ",request.POST.get("line2Checked"))
         print("Question: ",profile.quesno)
         print("In Post")
         
@@ -188,12 +189,16 @@ def QuestionView(request):
             tempSol.save()
             
             if str(givenAns) == str(currQues.answer):
-                if context["line2Checked"]:
-                    profile.remainingTime += 300
+                print("1 Timer Up")
+                # if context["line2Checked"]:
+                    # print("Timer Up")
+                    # profile.remainingTime += 300
                 profile.marks += 2
 
             else:
+                print("2 Timer Down")
                 if context["line2Checked"]:
+                    print("Timer Down")
                     profile.remainingTime -= 120
                 profile.marks -= 2
 

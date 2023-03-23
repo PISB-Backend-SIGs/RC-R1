@@ -56,9 +56,9 @@
     {% endif %}
 
     {% if profile.lifeline2_status %}
-      <input id = "line2Checked" type = "checkbox" disabled>Extra Time</input> <br>
+      <input id = "line2Checked" name = "line2Checked" type = "checkbox" disabled>Extra Time</input> <br>
     {% else %}
-      <input id = "line2Checked" type = "checkbox">Extra Time</input> <br>
+      <input id = "line2Checked" name = "line2Checked" type = "checkbox">Extra Time</input> <br>
     {% endif %}
 
     </form> 
@@ -72,10 +72,10 @@
 
   <script>
     
-    setTimeout(function() {
-    document.getElementById("line2Checked").disabled = true;
-    element.parentNode.removeChild(element);
-  }, 3000);
+  //   setTimeout(function() {
+  //   document.getElementById("line2Checked").disabled = true;
+  //   element.parentNode.removeChild(element);
+  // }, 3000);
 
     function countdown(seconds) {
       
