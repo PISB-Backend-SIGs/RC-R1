@@ -167,7 +167,7 @@ def QuestionView(request):
             # print("DIS--------------------", qList[0])
 
             if str(givenAns) == str(currQues.answer):
-                # print("first correct")
+
                 profile.marks += 4
                 profile.quesno += 1
                 profile.isFirstTry = True
@@ -188,12 +188,13 @@ def QuestionView(request):
             tempSol.save()
             
             if str(givenAns) == str(currQues.answer):
-                
-                # print("YOUR ANSWER:", givenAns)
-                # print("CORRECT: ", currQues.answer)
+                if context["line2Checked"]:
+                    profile.remainingTime += 300
                 profile.marks += 2
 
             else:
+                if context["line2Checked"]:
+                    profile.remainingTime -= 120
                 profile.marks -= 2
 
             
