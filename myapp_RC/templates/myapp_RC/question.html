@@ -42,61 +42,68 @@
 
     {% if profile.isFirstTry%}
         <input type="number" name="res1" id="res1" required><br>
-        <!-- <button type="submit">Submit<br></button><br> -->
+        
 
         <input type="number" name="res2" id="res2" disabled><br>
         <button type="submit">Submit<br></button><br>
 
     {% else %}
         <h3>First Answer: {{ resp1 }}</h3>
-        <!-- <input type="number" name="res1" placeholder= User_Response. id="res2" disabled><br><br> -->
-        <!-- <button type="submit">Submit<br></button><br> -->
-
+        
         <input type="number" name="res2" id="res2" required><br>
         <button type="submit">Submit<br></button><br>
 
     {% endif %}
 
-    <!-- <button type="button" href="#" onclick="lifeline1()">Lifeline 1<br></button><br> -->
+    {% if profile.lifeline2_status %}
+      <input id = "line2Checked" type = "checkbox" disabled>Extra Time</input> <br>
+    {% else %}
+      <input id = "line2Checked" type = "checkbox">Extra Time</input> <br>
+    {% endif %}
+
     </form> 
     {% if profile.lifeline1_status %}
     <a href="{% url 'lifeline1' %}"><button>Simple Question</button></a>
     {% endif %}
-    <!-- <script src="" async defer></script> -->
+    
     <p id="timer"></p>
     <div id="myBar" class="w3-container w3-green" style="width:20%">{{profile.lifeline1_count}}</div>
 </body>
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"> -->
-  <script>
-    document.getElementById('timer').innerHTML =
-      {{min1}} + ":" + {{second1}}
-    startTimer();
-    
-    function startTimer() {
-      var presentTime = document.getElementById('timer').innerHTML;
-      var timeArray = presentTime.split(/[:]+/);
-      var m = timeArray[0];
-      var s = checkSecond((timeArray[1] - 1));
-      if(s==59){m=m-1}
-      if(m<0){
-        return
-      }
-      
-      document.getElementById('timer').innerHTML =
-        m + ":" + s;
-      console.log(m)
-      setTimeout(startTimer, 1000);
-     
-      window.onload=function(){ 
-      window.setTimeout(document.name1.submit.bind(document.name1), ({{min1}}* 60 + {{second1}}) * 1000);
-      };
-    }
-    
-    function checkSecond(sec) {
-      if (sec < 10 && sec >= 0) {sec = "0" + sec}; // add zero in front of numbers < 10
-      if (sec < 0) {sec = "59"};
-      return sec;
-    }
 
-    </script>
+  <script>
+    
+    setTimeout(function() {
+    document.getElementById("line2Checked").disabled = true;
+    element.parentNode.removeChild(element);
+  }, 3000);
+
+    function countdown(seconds) {
+      
+      displayTime(seconds);
+  
+      
+      var timer = setInterval(function() {
+        seconds--;
+        displayTime(seconds);
+        if (seconds <= 0) {
+          clearInterval(timer);
+        }
+      }, 1000);
+  
+      function displayTime(seconds) {
+        
+        var minutes = Math.floor(seconds / 60);
+        var remainingSeconds = seconds % 60;
+  
+        
+        var formattedTime = ('0' + minutes).slice(-2) + ':' + ('0' + remainingSeconds).slice(-2);
+  
+        document.getElementById('timer').textContent = formattedTime;
+      }
+    }
+  
+    
+    countdown({{second1}}); 
+  </script>
+  
 </html>

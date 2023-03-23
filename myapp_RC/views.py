@@ -47,7 +47,7 @@ def signup(request):
             myuser.first_name = fname
             myuser.last_name = lname
             myuser.save()
-            newuserprofile=Profile(user = myuser, mob_no = mobno, remainingTime = datetime.timedelta(minutes=30))
+            newuserprofile=Profile(user = myuser, mob_no = mobno)
             newuserprofile.save()
 
             messages.success(request, "Your account has been successfully created!")
@@ -131,19 +131,15 @@ def QuestionView(request):
 
     # n2 = datetime.datetime.now()
     # n3 = n2 - n1
-    
-    # print("SYS TIME",n1)
-    # print("SERVER TIME:",n2)
-    # print(n3.seconds)
 
-    context["min1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds // 60
-    context["second1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds % 60
+    # context["min1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds // 60
+    context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds 
     
-    # context["min1"] = profile.remainingTime.seconds // 60
-    # context["second1"] = profile.remainingTime.seconds % 60
-    # profile.remainingTime -= (datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))
+    # context["min1"] = profile.remainingTime.seconds
     
-    # print("context",context)
+
+    # profile.remainingTime = profile.remainingTime - (datetime.datetime.now().timestamp() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None).timestamp())
+    # context["second1"] = profile.remainingTime
 
     if profile.lifeline1_count == 3 and profile.simpleQuestionUsed == False:
         profile.lifeline1_status = True
@@ -152,12 +148,14 @@ def QuestionView(request):
         context["resp1"] = User_Response.objects.get(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).response1
     
     if profile.quesno == 11 :
-        profile.remainingTime -= (datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))
+        
         profile.save()
         return redirect('Result')
-        
+    print("====")
     if request.method == "POST":
-        # print("In Post")
+        
+        print("Question: ",profile.quesno)
+        print("In Post")
         
         qList = eval(profile.questionIndexList)
         if profile.isFirstTry:
@@ -213,6 +211,7 @@ def QuestionView(request):
 
 
 def computeContext(user):
+    # Time 
     profile = Profile.objects.get(user = user)
     qList = eval(profile.questionIndexList)
     que = Question.objects.get(question_no = qList[0])
@@ -255,15 +254,12 @@ def lifelineone(request):
 
     context["currquest"] = currQuest.easyquestion
     context["profile"] = profile
-    # context["isFirstTry"] = profile.isFirstTry
-    # context["marks"] = profile.marks
 
-    context["min1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds // 60
-    context["second1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds % 60
+    # context["min1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds // 60
+    context["second1"] = (datetime.timedelta(seconds=profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
     
        
     if profile.quesno == 11 :
-        profile.remainingTime -= (datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))
         profile.save()
         return redirect('Result')
     
@@ -285,8 +281,8 @@ def lifelineone(request):
         profile.questionIndexList = str(qList[1:])
             
         profile.save()
-    else :
-        request.method = 'POST'
-        return redirect('lifelineone')
+    
+        request.method = "GET"
+        return QuestionView(request)    
     
     return render(request, 'myapp_RC/question.html', context)

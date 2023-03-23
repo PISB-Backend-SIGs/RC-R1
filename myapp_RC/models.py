@@ -25,11 +25,14 @@ class Profile(models.Model):
 
     simpleQuestionUsed = models.BooleanField(default=False)
     timeLLUsed = models.BooleanField(default=False)
-    remainingTime = models.DurationField()
+    remainingTime = models.IntegerField(default = 1800)
 
     # lifeline one
     lifeline1_count = models.IntegerField(default=0)
     lifeline1_status = models.BooleanField(default=False)
+
+    lifeline2_status = models.BooleanField(default = False)
+    lifeline2_checked = models.BooleanField(default = False)
 
     def __str__(self):
         return self.user.username
