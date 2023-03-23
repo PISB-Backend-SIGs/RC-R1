@@ -63,7 +63,10 @@
 
     </form> 
     {% if profile.lifeline1_status %}
-    <a href="{% url 'lifeline1' %}"><button>Simple Question</button></a>
+    <form method = "POST" action="{% url 'lifeline1' %}">
+      {% csrf_token %}
+      <button type = "submit">Simple Question</button>
+    </form>
     {% endif %}
     
     <p id="timer"></p>

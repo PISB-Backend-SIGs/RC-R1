@@ -106,42 +106,26 @@ def instruction(request):
 # @login_required(login_url = 'signin')
 def QuestionView(request):
     
-    # print("In Questionview")
+    
     context = { }
     ruser = request.user
     profile = Profile.objects.get(user = ruser)
-    # print("QNUM",profile.quesno)    
+    
     context['currquestNum'] = profile.quesno
     qList = eval(profile.questionIndexList)
 
-    # print("currquestion here: ",qList)
     currQues = Question.objects.get(question_no=qList[0])
     
     context["currquest"] = currQues.question
-    # print("currQues.question",currQues.question)
-    # context["isFirstTry"] = profile.isFirstTry
+    
     context["profile"] = profile
     context["res10"] = str(10)
-    # context["marks"] = profile.marks
+    
     context["easyQuestion"] = False
     
 
-    # dt_str = str(profile.startTime)
-    # n1 = datetime.datetime.fromisoformat(dt_str)
-    # n1 = n1.replace(tzinfo=None)
-
-    # n2 = datetime.datetime.now()
-    # n3 = n2 - n1
-
-    # context["min1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds // 60
     context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds 
     
-    # context["min1"] = profile.remainingTime.seconds
-    
-
-    # profile.remainingTime = profile.remainingTime - (datetime.datetime.now().timestamp() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None).timestamp())
-    # context["second1"] = profile.remainingTime
-
     if profile.lifeline1_count == 3 and profile.simpleQuestionUsed == False:
         profile.lifeline1_status = True
     
@@ -162,13 +146,16 @@ def QuestionView(request):
         if profile.isFirstTry:
             givenAns = request.POST["res1"]
 
-            # print("first attempt")
             tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user, isSimpleQuestion = False)
             tempSol.save()
-            # print("DIS--------------------", qList[0])
 
             if str(givenAns) == str(currQues.answer):
 
+                if request.POST.get("line2Checked") and profile.lifeline2_checked == False:
+                    profile.lifeline2_checked = True
+                    print("Timer Up")
+                    profile.remainingTime += 300
+            
                 profile.marks += 4
                 profile.quesno += 1
                 profile.isFirstTry = True
@@ -178,6 +165,10 @@ def QuestionView(request):
             
             else:
                 # CHANGE BACK
+                if request.POST.get("line2Checked") and profile.lifeline2_checked == False:
+                    profile.lifeline2_checked = True
+                    print("Timer Down")
+                    profile.remainingTime -= 120    
                 profile.isFirstTry = False   
             
 
@@ -189,15 +180,15 @@ def QuestionView(request):
             tempSol.save()
             
             if str(givenAns) == str(currQues.answer):
-                print("1 Timer Up")
-                # if context["line2Checked"]:
-                    # print("Timer Up")
-                    # profile.remainingTime += 300
+                if request.POST.get("line2Checked") and profile.lifeline2_checked == False:
+                    profile.lifeline2_checked = True
+                    print("Timer Up")
+                    profile.remainingTime += 300
                 profile.marks += 2
 
             else:
-                print("2 Timer Down")
-                if context["line2Checked"]:
+                if request.POST.get("line2Checked") and profile.lifeline2_checked == False:
+                    profile.lifeline2_checked = True
                     print("Timer Down")
                     profile.remainingTime -= 120
                 profile.marks -= 2
@@ -241,7 +232,7 @@ def leaderboard(request) :
     return render(request, 'myapp_RC/result.html', context)
 
 def lifelineone(request):
-    # print("In Lifeline one")
+    print("In Lifeline one")
     context = { }
     ruser = request.user
     profile = Profile.objects.get(user = ruser)
@@ -261,7 +252,6 @@ def lifelineone(request):
     context["currquest"] = currQuest.easyquestion
     context["profile"] = profile
 
-    # context["min1"] = (datetime.timedelta(seconds=3600) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds // 60
     context["second1"] = (datetime.timedelta(seconds=profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
     
        
@@ -270,7 +260,7 @@ def lifelineone(request):
         return redirect('Result')
     
     if request.method == "POST":
-    
+        print("LifeLine 1 Post REQ")
         print("In lifeline POST")
         givenAns = request.GET["res1"]
 
@@ -291,4 +281,4 @@ def lifelineone(request):
         request.method = "GET"
         return QuestionView(request)    
     
-    return render(request, 'myapp_RC/question.html', context)
+    return render(request, 'lifeline1', context)
