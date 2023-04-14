@@ -25,10 +25,10 @@
     <h3>Question: {{ currquest }}</h3>
     <!-- <h4>Logged in successfully. Question will be displayed here. For now question.html</h4> -->
    
-    {% if not easyquestion %}
-    <form method="POST" action="{% url 'QuestionView1' %}" name="name1">
+    {% if not isSimpleQuestion %}
+    <form method="POST" action="{% url 'QuestionView' %}" name="QuestionView">
     {% else %}  
-    <form method="POST" action="{% url 'lifeline1' %}" name="name1">
+    <form method="POST" action="{% url 'lifeline1' %}" name="lifeline1">
     {% endif %}
 
         {% csrf_token %}
@@ -107,6 +107,13 @@
   
     
     countdown({{second1}}); 
+  </script>
+
+  <script type="text/javascript">
+    window.history.forward();
+    function noback(){
+      window.history.forward();
+    }
   </script>
   
 </html>

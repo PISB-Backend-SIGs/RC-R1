@@ -102,7 +102,6 @@ def instruction(request):
         return render(request, "myapp_RC/question.html")
     return render(request,"myapp_RC/instruction.html")
 
-
 # @login_required(login_url = 'signin')
 def QuestionView(request):
     
@@ -121,18 +120,25 @@ def QuestionView(request):
     context["res10"] = str(10)
     
     context["easyQuestion"] = False
+    context["isSimpleQuestion"] = profile.simpleQuestionUsed
 
+    print("(In qview before post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
+    print("(In qview before post)profile.lifeline1_status", profile.lifeline1_status)
 
     context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds 
     
     if profile.lifeline1_count == 3 and profile.simpleQuestionUsed == False:
         profile.lifeline1_status = True
+        currQueslist = EasyQuestion.objects.all()
+        EasyQuestion.question_id = (random.randrange(len(currQueslist)))
+        # currQuest = EasyQuestion.objects.get(easyquestion_no = (random.randrange(len(currQueslist))))
+        # EasyQuestion.question = currQues.question
     
     if profile.isFirstTry == False :
         context["resp1"] = User_Response.objects.get(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).response1
     
     if profile.quesno == 11 :
-        
+             
         profile.save()
         return redirect('Result')
     print("====")
@@ -140,6 +146,9 @@ def QuestionView(request):
         # print("Checked Status: ",request.POST.get("line2Checked"))
         print("Question: ",profile.quesno)
         print("In Post")
+        
+        print("(In qview in post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
+        print("(In qview in post)profile.lifeline1_status", profile.lifeline1_status)
         
         qList = eval(profile.questionIndexList)
         if profile.isFirstTry:
@@ -161,7 +170,8 @@ def QuestionView(request):
                 profile.questionIndexList = str(qList[1:])
                 print("first now qlist = ", profile.questionIndexList)
                 if profile.lifeline1_count < 3 :
-                    profile.lifeline1_count += 1
+                    if profile.simpleQuestionUsed == False:
+                        profile.lifeline1_count += 1
             
             else:
                 # CHANGE BACK
@@ -170,6 +180,7 @@ def QuestionView(request):
                     print("Timer Down")
                     profile.remainingTime -= 120    
                 profile.isFirstTry = False   
+                profile.marks -= 2
             
 
         elif profile.isFirstTry == False:
@@ -200,6 +211,8 @@ def QuestionView(request):
             profile.questionIndexList = str(qList[1:])
             print("second now qlist = ", profile.questionIndexList)
             
+        print("(In qview after post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
+        print("(In qview after post)profile.lifeline1_status", profile.lifeline1_status)
         profile.save()
         # print("Profile Saved")
         request.method = "GET"
@@ -238,19 +251,26 @@ def lifelineone(request):
     ruser = request.user
     profile = Profile.objects.get(user = ruser)
 
-    profile.lifeline1_count = 0
+    profile.lifeline1_count += 1
     profile.simpleQuestionUsed = True
-    profile.lifeline1_status = True
+    profile.lifeline1_status = False
+    print("(In l1 before post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
+    print("(In l1 before post)profile.lifeline1_status", profile.lifeline1_status)
 
     qList = eval(profile.questionIndexList)
 
     context["easyQuestion"] = True
+    context["isSimpleQuestion"] = profile.simpleQuestionUsed
 
     context['currquestNum'] = profile.quesno
 
-    currQueslist = EasyQuestion.objects.all()
+    # currQueslist = EasyQuestion.objects.all()
 
-    currQuest = currQueslist[random.randrange(len(currQueslist))]
+    # currQuest = EasyQuestion.objects.get(easyquestion_no = (random.randrange(len(currQueslist))))
+    print("Iska value to ye hai ->", EasyQuestion.question_id)
+    currQuest = EasyQuestion.objects.get(easyquestion_no = EasyQuestion.question_id)
+    # currQuest = currQueslist[easyquestion_no=(random.randrange(len(currQueslist)).easyques)]
+    # currQuest = EasyQuestion.objects.get(easyquestion_no=qList[0])
 
     context["currquest"] = currQuest.easyquestion
     context["profile"] = profile
@@ -267,6 +287,7 @@ def lifelineone(request):
         
         givenAns = request.POST["res1"]
         profile.lifeline1_status = False
+        profile.simpleQuestionUsed = False
         context["easyQuestion"] = False
 
         # givenAns = request.POST["res1"]
@@ -276,6 +297,9 @@ def lifelineone(request):
 
         tempSol = User_Response(user_profile = profile, quetionID = currQuest.easyquestion_no, response1 = givenAns, user = profile.user, isSimpleQuestion = True)
         tempSol.save()
+        print("Easy Given ans", givenAns)
+        print("Easy Question", currQuest.easyquestion)
+        print("Easy Answer", currQuest.easyanswer)
 
         if str(givenAns) == str(currQuest.easyanswer):
             profile.marks += 4
@@ -286,10 +310,14 @@ def lifelineone(request):
         profile.quesno += 1
         profile.questionIndexList = str(qList[1:])
         print("thursday now qlist = ", profile.questionIndexList)
+        print("(In l1 in post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
+        print("(In l1 in post)profile.lifeline1_status", profile.lifeline1_status)
             
         profile.save()
     
         request.method = "GET"
-        return QuestionView(request)    
+        return QuestionView(request)
+    print("(In l1 after post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
+    print("(In l1 after post)profile.lifeline1_status", profile.lifeline1_status)
     
     return render(request, 'myapp_RC/question.html', context)

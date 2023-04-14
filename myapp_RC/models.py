@@ -21,6 +21,7 @@ class Profile(models.Model):
     startTime = models.DateTimeField(null = True)
     tempTime = models.DateTimeField(null = True)
 
+
     # totalTime = 
 
     simpleQuestionUsed = models.BooleanField(default=False)
@@ -29,7 +30,7 @@ class Profile(models.Model):
 
     # lifeline one
     lifeline1_count = models.IntegerField(default=0)
-    lifeline1_status = models.BooleanField(default=False)
+    lifeline1_status = models.BooleanField(default=False)  #used to check whether or not to display the Simpe Question button
 
     lifeline2_status = models.BooleanField(default = False)
     lifeline2_checked = models.BooleanField(default = False)
@@ -60,8 +61,9 @@ class User_Response(models.Model):
 
 class EasyQuestion(models.Model):
     easyquestion_no = models.IntegerField()    
-    easyquestion=models.CharField(max_length=1000)
-    easyanswer=models.IntegerField(default=-1)
+    easyquestion = models.CharField(max_length=1000)
+    easyanswer = models.IntegerField(default=-1)
+    question_id = models.IntegerField(default = 0)
     
     def __str__(self):
         return self.easyquestion
