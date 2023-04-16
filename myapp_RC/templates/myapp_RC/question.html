@@ -65,7 +65,7 @@
     {% if profile.lifeline1_status %}
     <form method = "GET" action="{% url 'lifeline1' %}">
       {% csrf_token %}
-      <button type = "submit">Simple Question</button>
+      <input type = "submit" name = "lifeline1" value = "lifeline1_selected"  button type = "submit">Simple Question</button>
     </form>
     {% endif %}
     

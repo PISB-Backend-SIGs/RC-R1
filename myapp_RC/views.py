@@ -137,6 +137,15 @@ def QuestionView(request):
     if profile.isFirstTry == False :
         context["resp1"] = User_Response.objects.get(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).response1
     
+    
+    if request.POST["lifeline1"] == "lifeline1_selected":
+        print("AA Gaye bhai yaha")
+        profile.save()
+        request.method = 'GET'
+        return lifelineone(request)
+        # return redirect('lifeline1')
+
+
     if profile.quesno == 11 :
              
         profile.save()
@@ -152,7 +161,7 @@ def QuestionView(request):
         
         qList = eval(profile.questionIndexList)
         if profile.isFirstTry:
-            givenAns = request.POST["res1"]
+            givenAns = request.POST['res1']
 
             tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user, isSimpleQuestion = False)
             tempSol.save()
@@ -280,6 +289,7 @@ def lifelineone(request):
     if profile.quesno == 11 :
         profile.save()
         return redirect('Result')
+    
     
     if request.method == "POST":
         print("LifeLine 1 Post REQ")
