@@ -25,11 +25,20 @@
     <h3>Question: {{ currquest }}</h3>
     <!-- <h4>Logged in successfully. Question will be displayed here. For now question.html</h4> -->
    
-    {% if not isSimpleQuestion %}
     <form method="POST" action="{% url 'QuestionView' %}" name="QuestionView">
-    {% else %}  
-    <form method="POST" action="{% url 'lifeline1' %}" name="lifeline1">
-    {% endif %}
+      
+    <!-- {% if profile.lifeline1_status %}
+      <form method="POST" action="{% url 'QuestionView' %}">
+        {% csrf_token %}
+        <input type="submit" name="lifeline1" value="lifeline1_selected">
+      </form>
+    {% else %}
+      <form method="POST" action="{% url 'QuestionView' %}">
+        {% csrf_token %}
+        <input type="hidden" name="lifeline1" value="no">
+      </form>
+    {% endif %} -->
+
 
         {% csrf_token %}
 
@@ -63,11 +72,14 @@
 
     </form> 
     {% if profile.lifeline1_status %}
-    <form method = "GET" action="{% url 'lifeline1' %}">
+    <form method = "POST" action="{% url 'QuestionView' %}">
       {% csrf_token %}
-      <input type = "submit" name = "lifeline1" value = "lifeline1_selected"  button type = "submit">Simple Question</button>
+      <input type = "submit" name = "lifeline1" value = "Simple Question"/>
+      <!-- <button type = "submit">Simple Question</button> -->
     </form>
     {% endif %}
+
+    
     
     <p id="timer"></p>
     <div id="myBar" class="w3-container w3-green" style="width:20%">{{profile.lifeline1_count}}</div>

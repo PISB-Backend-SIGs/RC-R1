@@ -117,17 +117,17 @@ def QuestionView(request):
     context["currquest"] = currQues.question
     
     context["profile"] = profile
-    context["res10"] = str(10)
     
-    context["easyQuestion"] = False
     context["isSimpleQuestion"] = profile.simpleQuestionUsed
 
     print("(In qview before post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
     print("(In qview before post)profile.lifeline1_status", profile.lifeline1_status)
+    print("(In qview before post)profile.lifeline1_count", profile.lifeline1_count)
+    print("In qview before post profile.isFirstTry = ", profile.isFirstTry)
 
     context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds 
     
-    if profile.lifeline1_count == 3 and profile.simpleQuestionUsed == False:
+    if profile.lifeline1_count == 3 and profile.simpleQuestionUsed == False and profile.lifeline1_using == False:
         profile.lifeline1_status = True
         currQueslist = EasyQuestion.objects.all()
         EasyQuestion.question_id = (random.randrange(len(currQueslist)))
@@ -138,14 +138,18 @@ def QuestionView(request):
         context["resp1"] = User_Response.objects.get(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).response1
     
     
-    if request.POST["lifeline1"] == "lifeline1_selected":
+    if request.POST.get("lifeline1") == "Simple Question":
         print("AA Gaye bhai yaha")
         profile.save()
         request.method = 'GET'
         return lifelineone(request)
         # return redirect('lifeline1')
 
-
+    if profile.lifeline1_using == True:
+        print("In here , lifeline1_using true")
+        profile.save()
+        lifelineone(request)
+    
     if profile.quesno == 11 :
              
         profile.save()
@@ -160,10 +164,12 @@ def QuestionView(request):
         print("(In qview in post)profile.lifeline1_status", profile.lifeline1_status)
         
         qList = eval(profile.questionIndexList)
+
         if profile.isFirstTry:
             givenAns = request.POST['res1']
 
-            tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user, isSimpleQuestion = False)
+            # tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user, isSimpleQuestion = False)
+            tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user)
             tempSol.save()
 
             if str(givenAns) == str(currQues.answer):
@@ -226,7 +232,8 @@ def QuestionView(request):
         # print("Profile Saved")
         request.method = "GET"
         return QuestionView(request)
-    
+    print("MARKS", profile.marks)
+    print("Q_NO", profile.quesno)
     return render(request, 'myapp_RC/question.html', context)
 
 
@@ -255,13 +262,13 @@ def leaderboard(request) :
     return render(request, 'myapp_RC/result.html', context)
 
 def lifelineone(request):
+    print("===")
     print("In Lifeline one")
     context = { }
     ruser = request.user
     profile = Profile.objects.get(user = ruser)
-
+    profile.lifeline1_using = True
     profile.lifeline1_count += 1
-    profile.simpleQuestionUsed = True
     profile.lifeline1_status = False
     print("(In l1 before post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
     print("(In l1 before post)profile.lifeline1_status", profile.lifeline1_status)
@@ -297,8 +304,9 @@ def lifelineone(request):
         
         givenAns = request.POST["res1"]
         profile.lifeline1_status = False
-        profile.simpleQuestionUsed = False
+        profile.simpleQuestionUsed = True
         context["easyQuestion"] = False
+        profile.lifeline1_using = False
 
         # givenAns = request.POST["res1"]
 
@@ -323,11 +331,16 @@ def lifelineone(request):
         print("(In l1 in post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
         print("(In l1 in post)profile.lifeline1_status", profile.lifeline1_status)
             
+        profile.isFirstTry = True
+        print("In lifeline post profile.isFirstTry = ", profile.isFirstTry)
+
         profile.save()
-    
         request.method = "GET"
+        context['profile'] =  profile
         return QuestionView(request)
     print("(In l1 after post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
     print("(In l1 after post)profile.lifeline1_status", profile.lifeline1_status)
-    
+    print("===")
+    profile.isFirstTry = True
+    profile.save()
     return render(request, 'myapp_RC/question.html', context)

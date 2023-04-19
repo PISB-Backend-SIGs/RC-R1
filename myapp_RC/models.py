@@ -24,14 +24,15 @@ class Profile(models.Model):
 
     # totalTime = 
 
-    simpleQuestionUsed = models.BooleanField(default=False)
+    simpleQuestionUsed = models.BooleanField(null = True)
     timeLLUsed = models.BooleanField(default=False)
     remainingTime = models.IntegerField(default = 1800)
 
     # lifeline one
     lifeline1_count = models.IntegerField(default=0)
     lifeline1_status = models.BooleanField(default=False)  #used to check whether or not to display the Simpe Question button
-
+    lifeline1_using = models.BooleanField(null=True)
+    
     lifeline2_status = models.BooleanField(default = False)
     lifeline2_checked = models.BooleanField(default = False)
 
@@ -54,7 +55,7 @@ class User_Response(models.Model):
     response1 = models.CharField(null = True,max_length=1000)
     response2 = models.CharField(null = True,max_length=1000)
 
-    isSimpleQuestion = models.BooleanField(default=False)
+    isSimpleQuestion = models.BooleanField(null = True)
 
     def __str__(self):
         return self.user.username
