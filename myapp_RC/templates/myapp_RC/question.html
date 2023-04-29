@@ -83,6 +83,21 @@
     
     <p id="timer"></p>
     <div id="myBar" class="w3-container w3-green" style="width:20%">{{profile.lifeline1_count}}</div>
+
+    <script>
+      setInterval(function(){
+        $.ajax({
+          url: "{% url 'TabSwitch' %}",
+          type: "GET",
+          dataType: 'json',
+          success: function(data){
+            if(!data.on_page){
+              alert("Bahar Nahi Jana Beta. Not Allowed");
+            }
+          }
+        });
+      }, 1000)
+    </script>
 </body>
 
   <script>
@@ -117,9 +132,12 @@
       }
     }
   
+
     
     countdown({{second1}}); 
   </script>
+
+
 
   <script type="text/javascript">
     window.history.forward();
@@ -127,5 +145,9 @@
       window.history.forward();
     }
   </script>
+
+  
+
+
   
 </html>

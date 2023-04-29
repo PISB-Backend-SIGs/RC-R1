@@ -10,6 +10,7 @@ urlpatterns = [
     path('signout/', views.signout, name = 'SignOut'),
     path('instruction/',views.instruction, name = 'Instruction'),
     path('question/', views.QuestionView, name = 'QuestionView'),
+    path('check/', views.check_page, name = 'TabSwitch'),
     path('question/', views.lifelineone, name = 'lifeline1'),
     path('result/', views.leaderboard, name = 'Result'),
 ]

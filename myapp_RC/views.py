@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from myapp_RC.models import *
 from django.contrib.auth.models import User # using a django in built library to store or register the user in our database
 from django.contrib import messages  # to display messagess after the the user has registered successfully
@@ -98,11 +98,17 @@ def signout(request):
     return redirect('/home')
 
 def instruction(request):
+
     if request.method == 'POST':
         return render(request, "myapp_RC/question.html")
     return render(request,"myapp_RC/instruction.html")
 
-# @login_required(login_url = 'signin')
+def check_page(request):
+    question_page = 'question' in request.META.get('HTTP_REFERER', '')
+    # if question_page:
+    return JsonResponse({'question_page': question_page})
+
+# @login_required(login_url = 'question')
 def QuestionView(request):
     
     context = { }
@@ -155,8 +161,17 @@ def QuestionView(request):
         profile.save()
         return redirect('Result')
     print("====")
+
+    # if request.method == "POST" and profile.simpleQuestionUsed:
+    #     profile.simpleQuestionUsed = False
+    #     profile.save();
+    #     request.method = "GET"
+    #     return QuestionView(request)
+
     if request.method == "POST":
         # print("Checked Status: ",request.POST.get("line2Checked"))
+        # question_page = request.POST.get('question_page')
+        # if question_page:
         print("Question: ",profile.quesno)
         print("In Post")
         
@@ -195,8 +210,8 @@ def QuestionView(request):
                     print("Timer Down")
                     profile.remainingTime -= 120    
                 profile.isFirstTry = False   
-                profile.marks -= 2
-            
+                # profile.marks -= 2
+        
 
         elif profile.isFirstTry == False:
 
@@ -217,7 +232,7 @@ def QuestionView(request):
                     profile.lifeline2_checked = True
                     print("Timer Down")
                     profile.remainingTime -= 120
-                profile.marks -= 2
+                profile.marks -= 4
 
             
             profile.quesno += 1
@@ -225,7 +240,11 @@ def QuestionView(request):
             qList = eval(profile.questionIndexList)
             profile.questionIndexList = str(qList[1:])
             print("second now qlist = ", profile.questionIndexList)
-            
+        
+        # else:
+        #     messages.error(request, "Bete Tab Switch kara kya? Dimaag chala google nai!")
+        #     return JsonResponse({'error':'Tab Switch Detected'})
+                
         print("(In qview after post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
         print("(In qview after post)profile.lifeline1_status", profile.lifeline1_status)
         profile.save()
@@ -234,8 +253,8 @@ def QuestionView(request):
         return QuestionView(request)
     print("MARKS", profile.marks)
     print("Q_NO", profile.quesno)
+    profile.save()
     return render(request, 'myapp_RC/question.html', context)
-
 
 def computeContext(user):
     # Time 
@@ -326,6 +345,7 @@ def lifelineone(request):
         
         
         profile.quesno += 1
+        profile.save();
         profile.questionIndexList = str(qList[1:])
         print("thursday now qlist = ", profile.questionIndexList)
         print("(In l1 in post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
