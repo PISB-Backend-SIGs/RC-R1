@@ -35,6 +35,7 @@ class Profile(models.Model):
     
     lifeline2_status = models.BooleanField(default = False)
     lifeline2_checked = models.BooleanField(default = False)
+    focuscount = models.IntegerField(default = 0)
 
     def __str__(self):
         return self.user.username

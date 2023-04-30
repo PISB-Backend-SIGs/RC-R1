@@ -4,11 +4,13 @@ from myapp_RC.models import *
 from django.contrib.auth.models import User # using a django in built library to store or register the user in our database
 from django.contrib import messages  # to display messagess after the the user has registered successfully
 from django.shortcuts import redirect, render #to use the 'redirect' function in line 28
-from django.contrib.auth import login,authenticate, logout  #refer line 39, 42
+from django.contrib.auth import login,authenticate, logout, login  #refer line 39, 42
+from django.contrib.auth.decorators import login_required
 import re
 import numpy as np
 import random
 import datetime
+
 
 def home(request):
     return render(request, "myapp_RC/register.html")
@@ -104,11 +106,25 @@ def instruction(request):
     return render(request,"myapp_RC/instruction.html")
 
 def check_page(request):
-    question_page = 'question' in request.META.get('HTTP_REFERER', '')
-    # if question_page:
-    return JsonResponse({'question_page': question_page})
+    if request.method == 'POST':
+        data = request.POST
+        if 'tab_switched' in data and data['tab_switched']:
+            
+            print("In checkpage function")
+            context = { }
+            ruser = request.user
+            profile = Profile.objects.get(user = ruser)
+            profile.focuscount += 1
+            context['message'] = "Kidhar jara bsdk. Bass kar"
+        
+        if profile.focuscount == 3:
+            return redirect('/signout/')
+        
+        profile.save()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'})
 
-# @login_required(login_url = 'question')
+@login_required(login_url = 'SignIn')
 def QuestionView(request):
     
     context = { }
@@ -253,7 +269,9 @@ def QuestionView(request):
         return QuestionView(request)
     print("MARKS", profile.marks)
     print("Q_NO", profile.quesno)
+    context['marks'] = profile.marks
     profile.save()
+    print("in question view, focuscount =", profile.focuscount)
     return render(request, 'myapp_RC/question.html', context)
 
 def computeContext(user):

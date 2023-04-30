@@ -57,6 +57,8 @@ CACHE_MIDDLEWARE_KEY_PREFIX = ''
 
 ROOT_URLCONF = 'RC.urls'
 
+# APPEND_SLASH = False
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
