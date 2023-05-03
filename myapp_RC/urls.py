@@ -10,7 +10,8 @@ urlpatterns = [
     path('signout/', views.signout, name = 'SignOut'),
     path('instruction/',views.instruction, name = 'Instruction'),
     path('question/', views.QuestionView, name = 'QuestionView'),
-    path('question/', views.check_page, name = 'TabSwitch'),
+    path('tabswitch/', views.tabswitch, name = 'tabswitch'),
     path('question/', views.lifelineone, name = 'lifeline1'),
     path('result/', views.leaderboard, name = 'Result'),
+    path('apnaadmin/', views.admin, name = 'Admin')
 ]

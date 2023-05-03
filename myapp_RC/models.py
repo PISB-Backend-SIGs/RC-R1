@@ -24,18 +24,18 @@ class Profile(models.Model):
 
     # totalTime = 
 
-    simpleQuestionUsed = models.BooleanField(null = True)
+    simpleQuestionUsed = models.BooleanField(default = False)
     timeLLUsed = models.BooleanField(default=False)
     remainingTime = models.IntegerField(default = 1800)
 
     # lifeline one
     lifeline1_count = models.IntegerField(default=0)
     lifeline1_status = models.BooleanField(default=False)  #used to check whether or not to display the Simpe Question button
-    lifeline1_using = models.BooleanField(null=True)
+    lifeline1_using = models.BooleanField(default=False)
     
     lifeline2_status = models.BooleanField(default = False)
     lifeline2_checked = models.BooleanField(default = False)
-    focuscount = models.IntegerField(default = 0)
+    focuscount = models.IntegerField(default = 3)
 
     def __str__(self):
         return self.user.username

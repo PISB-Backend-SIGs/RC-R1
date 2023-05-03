@@ -105,24 +105,20 @@ def instruction(request):
         return render(request, "myapp_RC/question.html")
     return render(request,"myapp_RC/instruction.html")
 
-def check_page(request):
-    if request.method == 'POST':
-        data = request.POST
-        if 'tab_switched' in data and data['tab_switched']:
-            
-            print("In checkpage function")
-            context = { }
-            ruser = request.user
-            profile = Profile.objects.get(user = ruser)
-            profile.focuscount += 1
-            context['message'] = "Kidhar jara bsdk. Bass kar"
-        
-        if profile.focuscount == 3:
-            return redirect('/signout/')
-        
-        profile.save()
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'error'})
+def tabswitch(request):
+    print("Inside Check-page function")
+
+    ruser = request.user
+    profile = Profile.objects.get(user = ruser)
+    profile.focuscount -= 1
+    profile.save();
+
+    print("focus = ", profile.focuscount)
+
+
+    return JsonResponse({'context':int(profile.focuscount)})
+
+
 
 @login_required(login_url = 'SignIn')
 def QuestionView(request):
@@ -267,10 +263,16 @@ def QuestionView(request):
         # print("Profile Saved")
         request.method = "GET"
         return QuestionView(request)
+    
+
     print("MARKS", profile.marks)
     print("Q_NO", profile.quesno)
     context['marks'] = profile.marks
     profile.save()
+
+    print("MARKS after save in qview", profile.marks)
+    print("Q_NO after save in qview" , profile.quesno)
+
     print("in question view, focuscount =", profile.focuscount)
     return render(request, 'myapp_RC/question.html', context)
 
@@ -337,10 +339,9 @@ def lifelineone(request):
     
     if request.method == "POST":
         print("LifeLine 1 Post REQ")
-        print("In lifeline POST")
         
         givenAns = request.POST["res1"]
-        profile.lifeline1_status = False
+        profile.lifeline1_status = True
         profile.simpleQuestionUsed = True
         context["easyQuestion"] = False
         profile.lifeline1_using = False
@@ -361,20 +362,25 @@ def lifelineone(request):
         else:
             profile.marks -= 4
         
-        
+        # profile.save()
         profile.quesno += 1
-        profile.save();
+
         profile.questionIndexList = str(qList[1:])
-        print("thursday now qlist = ", profile.questionIndexList)
+
+
+        print(" now qlist = ", profile.questionIndexList)
         print("(In l1 in post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
         print("(In l1 in post)profile.lifeline1_status", profile.lifeline1_status)
             
         profile.isFirstTry = True
         print("In lifeline post profile.isFirstTry = ", profile.isFirstTry)
-
+        print("question number before saving ",profile.quesno)
+        print("Marks before save", profile.marks)
         profile.save()
+        print("Marks after save", profile.marks)
+        print("Question number after saving ",profile.quesno)
         request.method = "GET"
-        context['profile'] =  profile
+        # context['profile'] =  profile
         return QuestionView(request)
     print("(In l1 after post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
     print("(In l1 after post)profile.lifeline1_status", profile.lifeline1_status)
@@ -382,3 +388,32 @@ def lifelineone(request):
     profile.isFirstTry = True
     profile.save()
     return render(request, 'myapp_RC/question.html', context)
+
+# @method_decorator(staff_member_required, name='dispatch')
+def admin(request):
+
+    if request.method == 'POST':
+        superusername = request.POST['superusername']
+        superpwd = request.POST['pass1']
+
+        username = request.POST['username']
+        password = request.POST['pass']
+
+        superuser = authenticate(username = superusername, password = superpwd)
+        user = authenticate(username = username, password = password)
+
+        if superuser.is_superuser and user is not None:
+            profile = Profile.objects.get(user = user)
+            profile.focuscount = request.POST['tabs']
+
+            profile.save()
+
+            messages.success(request, "Updated")
+            return render(request, "myapp_RC/signin.html")
+
+        else:
+            messages.error(request, "Bad Credentials")
+            return render(request, "myapp_RC/signin.html")
+        
+    return render (request, "myapp_RC/admin.html")
+
