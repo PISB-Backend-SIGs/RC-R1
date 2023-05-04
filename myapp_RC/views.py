@@ -1,4 +1,5 @@
 import json
+import time
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 import openai
@@ -389,19 +390,13 @@ def lifelineone(request):
 def lifeLine3(request):
     print("in L3")
     print("======================")
-    # if request.method == "POST":
-    #     question = request.POST['question']
-    #     print(question)
-    #     answerResp = GPT_Link(question)
-    #     return JsonResponse({'answer': answerResp})
     if request.method == "GET":
-        # userQuery = request.GET["question"]
         userQuery = request.GET["question"]
         allKeys = chatGPTLifeLine.objects.all()
         allKeys2 = chatGPTLifeLine.objects.filter(isDepleted = False)
 
         if len(allKeys2) == 0:
-            return JsonResponse({'question': {userQuery},'answer': "Somethingwentwrong"})
+            return JsonResponse({'question': {userQuery},'answer': "Somethingwentwrong1"})
         
         isproblem = True
 
@@ -409,23 +404,30 @@ def lifeLine3(request):
         for k in allKeys:
             print(k.key, k.numUsed, k.isDepleted)
         #===================================
+        currentTime = time.time()
 
         for key in allKeys2:
-            if key.numUsed < 3:
-                isproblem = False
-                key.numUsed += 1
-                key.save()
-                break
+            print(f"Key last used {currentTime - key.lastUsed} seconds ago")
+            print(f"{currentTime} - {key.lastUsed} = {currentTime - key.lastUsed}")
+            
+            if True:
+                if key.numUsed < 3:
+                    isproblem = False
+                    key.numUsed += 1
+                    key.lastUsed = time.time()
+                    key.save()
+                    break
+                else:
+                    print("Key is depleted")
+                    key.isDepleted = True
+                    key.save()
             else:
-                print("Key is depleted")
-                key.isDepleted = True
-                key.save()
+                print(f"is in use: {key}")
 
         if isproblem:
-            return JsonResponse({'question': {userQuery},'answer': "Somethingwentwrong"})
+            return JsonResponse({'question': {userQuery},'answer': "Somethingwentwrong2"})
         
         answerResp = GPT_Link(userQuery, key= key)
-        print("======================")
         return JsonResponse({'question': userQuery,'answer': answerResp})
 
 
@@ -452,15 +454,20 @@ def GPT_Link(message, key):
 
     response = requests.post(URL, headers=headers, json=payload, stream=False)
     print("Here==========",response.content)
+
+    # if "choices" not in json.loads(response.content):
+    #     return "Somethingwentwrong"
+    
     return (json.loads(response.content)["choices"][0]['message']['content'])
 
 def test(request):
-    # try:
 
     return render(request, "myapp_RC/ajaxcode1.html")
 
 def call(request):
-    print("+++++++++++++++")
-    userQuery = request.GET["question"]
-    print(f"CALL CALLED: {userQuery}")
-    return JsonResponse({"Nada":"t"})
+    allKeys = chatGPTLifeLine.objects.all()
+    for key in allKeys:
+        key.numUsed = 0
+        key.isDepleted = False
+        key.save()
+

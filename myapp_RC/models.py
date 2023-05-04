@@ -73,7 +73,9 @@ class EasyQuestion(models.Model):
 class chatGPTLifeLine(models.Model):
     key = models.CharField(max_length=1000)
     numUsed = models.IntegerField(default=0)
+    lastUsed = models.FloatField(default= 1700000000.213593)
     isDepleted = models.BooleanField(default=False)
+    
     
     def __str__(self):
         return self.key
