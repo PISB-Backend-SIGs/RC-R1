@@ -9,7 +9,11 @@ urlpatterns = [
     path('signin/', views.signin, name = 'SignIn'),
     path('signout/', views.signout, name = 'SignOut'),
     path('instruction/',views.instruction, name = 'Instruction'),
-    path('question/', views.QuestionView, name = 'QuestionView1'),
+    path('question/', views.QuestionView, name = 'QuestionView'),
+    path('question/', views.check_page, name = 'TabSwitch'),
+    path('question/', views.lifelineone, name = 'lifeline1'),
     path('result/', views.leaderboard, name = 'Result'),
-    path('lifeline1/', views.lifelineone, name = 'lifeline1'),  
+    path('lifeline3/', views.lifeLine3, name = 'lifeline3'),
+    path('test/', views.test, name = 'test'),
+    path('callTest/', views.call, name = 'callTest'),
 ]

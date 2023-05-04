@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+// $("#button_1").click( function() {
+//     console.log("PRESSED"),
+//     // $.ajax({type: "POST",
+//     //     url: "/callTest",
+//     //     data: {},
+//     //     success:function(result) {
+//     //       alert('ok');
+//     //     },
+//     //     error:function(result) {
+//     //       alert('error');
+//     //     }
+//     // });
+// });
+function myFunction() {
+  console.log("HERE AHE ME")
+  $.ajax({
+
+        // url: "{% url 'callTest' %}",  // URL of your Django view
+        url: "{% url 'lifeline3' %}",  // URL of your Django view
+        dataType:"json",
+        type: 'GET',  // HTTP method
+        // body: {'param': 't'},  // Optional data to send
+        data: {'question': document.getElementById("userQuestion").value},  // Optional data to send
+        success: function(response) {
+            // Handle successful response from server
+            console.log("Success");
+            console.log(response);
+            // console.log(response.data.answer);
+            // console.log(response.data["answer"]);
+            $("#answerParagraph").text(response.answer);
+        },
+        error: function(xhr, status, error) {
+            // Handle error response from server
+            console.log("Error");
+            console.log(xhr);
+            console.log(status);
+            console.log(error);
+        }
+    });
+}
+</script>
+</head>
+<body>
+<p id="answerParagraph">?</p>
+<input type="text" id="userQuestion"></input>
+<button id="my-button" onclick="myFunction()">Click me</button>
+
+</body>
+</html>
