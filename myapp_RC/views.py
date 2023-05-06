@@ -158,6 +158,8 @@ def QuestionView(request):
     
     if request.POST.get("lifeline1") == "Simple Question":
         print("AA Gaye bhai yaha")
+        currQueslist = EasyQuestion.objects.all()
+        EasyQuestion.question_id = (random.randrange(len(currQueslist)))
         profile.save()
         request.method = 'GET'
         return lifelineone(request)
@@ -165,9 +167,47 @@ def QuestionView(request):
 
     if profile.lifeline1_using == True:
         print("In here , lifeline1_using true")
+        givenAns = request.POST["res1"]
+        profile.lifeline1_status = False  #to disable Simple Question button
+        profile.simpleQuestionUsed = True 
+        context["easyQuestion"] = False
+        profile.lifeline1_using = False
+        currQuest = EasyQuestion.objects.get(easyquestion_no = EasyQuestion.question_id)
+
+
+        tempSol = User_Response(user_profile = profile, quetionID = currQuest.easyquestion_no, response1 = givenAns, user = profile.user, isSimpleQuestion = True)
+        tempSol.save()
+        print("Easy Given ans", givenAns)
+        print("Easy Question", currQuest.easyquestion)
+        print("Easy Answer", currQuest.easyanswer)
+
+        if str(givenAns) == str(currQuest.easyanswer):
+            profile.marks += 4
+        else:
+            profile.marks -= 4
+        
+        # profile.save()
+        profile.quesno += 1
+
+        profile.questionIndexList = str(qList[1:])
+
+
+        print(" now qlist = ", profile.questionIndexList)
+        print("(In l1 in post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
+        print("(In l1 in post)profile.lifeline1_status", profile.lifeline1_status)
+            
+        profile.isFirstTry = True
+        print("In lifeline post profile.isFirstTry = ", profile.isFirstTry)
+        print("question number before saving ",profile.quesno)
+        print("Marks before save", profile.marks)
         profile.save()
-        lifelineone(request)
+        print("Marks after save", profile.marks)
+        print("Question number after saving ",profile.quesno)
+        request.method = "GET"
+        # context['profile'] =  profile
+        return QuestionView(request)
     
+
     if profile.quesno == 11 :
              
         profile.save()
@@ -337,51 +377,51 @@ def lifelineone(request):
         return redirect('Result')
     
     
-    if request.method == "POST":
-        print("LifeLine 1 Post REQ")
+    # if request.method == "POST":
+    #     print("LifeLine 1 Post REQ")
         
-        givenAns = request.POST["res1"]
-        profile.lifeline1_status = True
-        profile.simpleQuestionUsed = True
-        context["easyQuestion"] = False
-        profile.lifeline1_using = False
-
         # givenAns = request.POST["res1"]
+        # profile.lifeline1_status = True
+        # profile.simpleQuestionUsed = True
+        # context["easyQuestion"] = False
+        # profile.lifeline1_using = False
 
-        # tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user, isSimpleQuestion = False)
+        # # givenAns = request.POST["res1"]
+
+        # # tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user, isSimpleQuestion = False)
+        # # tempSol.save()
+
+        # tempSol = User_Response(user_profile = profile, quetionID = currQuest.easyquestion_no, response1 = givenAns, user = profile.user, isSimpleQuestion = True)
         # tempSol.save()
+        # print("Easy Given ans", givenAns)
+        # print("Easy Question", currQuest.easyquestion)
+        # print("Easy Answer", currQuest.easyanswer)
 
-        tempSol = User_Response(user_profile = profile, quetionID = currQuest.easyquestion_no, response1 = givenAns, user = profile.user, isSimpleQuestion = True)
-        tempSol.save()
-        print("Easy Given ans", givenAns)
-        print("Easy Question", currQuest.easyquestion)
-        print("Easy Answer", currQuest.easyanswer)
-
-        if str(givenAns) == str(currQuest.easyanswer):
-            profile.marks += 4
-        else:
-            profile.marks -= 4
+        # if str(givenAns) == str(currQuest.easyanswer):
+        #     profile.marks += 4
+        # else:
+        #     profile.marks -= 4
         
-        # profile.save()
-        profile.quesno += 1
+        # # profile.save()
+        # profile.quesno += 1
 
-        profile.questionIndexList = str(qList[1:])
+        # profile.questionIndexList = str(qList[1:])
 
 
-        print(" now qlist = ", profile.questionIndexList)
-        print("(In l1 in post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
-        print("(In l1 in post)profile.lifeline1_status", profile.lifeline1_status)
+        # print(" now qlist = ", profile.questionIndexList)
+        # print("(In l1 in post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
+        # print("(In l1 in post)profile.lifeline1_status", profile.lifeline1_status)
             
-        profile.isFirstTry = True
-        print("In lifeline post profile.isFirstTry = ", profile.isFirstTry)
-        print("question number before saving ",profile.quesno)
-        print("Marks before save", profile.marks)
-        profile.save()
-        print("Marks after save", profile.marks)
-        print("Question number after saving ",profile.quesno)
-        request.method = "GET"
-        # context['profile'] =  profile
-        return QuestionView(request)
+        # profile.isFirstTry = True
+        # print("In lifeline post profile.isFirstTry = ", profile.isFirstTry)
+        # print("question number before saving ",profile.quesno)
+        # print("Marks before save", profile.marks)
+        # profile.save()
+        # print("Marks after save", profile.marks)
+        # print("Question number after saving ",profile.quesno)
+        # request.method = "GET"
+        # # context['profile'] =  profile
+        # return QuestionView(request)
     print("(In l1 after post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
     print("(In l1 after post)profile.lifeline1_status", profile.lifeline1_status)
     print("===")
