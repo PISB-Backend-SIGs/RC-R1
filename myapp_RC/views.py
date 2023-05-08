@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import JsonResponse
 from myapp_RC.models import *
 from django.contrib.auth.models import User # using a django in built library to store or register the user in our database
 from django.contrib import messages  # to display messagess after the the user has registered successfully
@@ -9,11 +9,13 @@ import re
 import numpy as np
 import random
 import datetime
-
+import requests
+import time
+import json
 from django.http import JsonResponse
 
 def home(request):
-    return render(request, "myapp_RC/register.html")
+    return render(request, "myapp_RC/signin.html")
 
 def signup(request):
     
@@ -120,26 +122,71 @@ def QuestionView(request):
     context["currquest"] = currQues.question
     
     context["profile"] = profile
-    context["res10"] = str(10)
 
-
-    # context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds 
+    context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds 
+    profile.startTime = datetime.datetime.now()
+    profile.remainingTime = context["second1"]
     
-    if profile.lifeline1_count == 3 and profile.simpleQuestionUsed == False:
+    if profile.lifeline1_count == 3 and profile.simpleQuestionUsed == False and profile.lifeline1_using == False:
         profile.lifeline1_status = True
+        currQueslist = EasyQuestion.objects.all()
+        profile.lifeline1_question_id = (random.randrange(len(currQueslist)))
     
     if profile.isFirstTry == False :
         context["resp1"] = User_Response.objects.get(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).response1
     
+    if profile.lifeline1_using == True:
+        print("In here , lifeline1_using true")
+        givenAns = request.POST["res1"]
+        profile.lifeline1_status = False  #to disable Simple Question button
+        profile.simpleQuestionUsed = True 
+        context["easyQuestion"] = False
+        profile.lifeline1_using = False
+        currQuest = EasyQuestion.objects.get(easyquestion_no = profile.lifeline1_question_id)
+
+
+        tempSol = User_Response(user_profile = profile, quetionID = currQuest.easyquestion_no, response1 = givenAns, user = profile.user, isSimpleQuestion = True)
+        tempSol.save()
+        print("Easy Given ans", givenAns)
+        print("Easy Question", currQuest.easyquestion)
+        print("Easy Answer", currQuest.easyanswer)
+
+        if str(givenAns) == str(currQuest.easyanswer):
+            profile.marks += 4
+        else:
+            profile.marks -= 4
+        
+        # profile.save()
+        profile.quesno += 1
+
+        profile.questionIndexList = str(qList[1:])
+
+
+        print(" now qlist = ", profile.questionIndexList)
+        print("(In l1 in post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
+        print("(In l1 in post)profile.lifeline1_status", profile.lifeline1_status)
+            
+        profile.isFirstTry = True
+        print("In lifeline post profile.isFirstTry = ", profile.isFirstTry)
+        print("question number before saving ",profile.quesno)
+        print("Marks before save", profile.marks)
+        profile.save()
+        print("Marks after save", profile.marks)
+        print("Question number after saving ",profile.quesno)
+        request.method = "GET"
+        # context['profile'] =  profile
+        return QuestionView(request)
+
     if profile.quesno == 11 :
         
         profile.save()
         return redirect('Result')
     print("====")
     if request.method == "POST":
-        # print("Checked Status: ",request.POST.get("line2Checked"))
+        # print("Checked Status: ",profile.lifeline2_status)
         print("Question: ",profile.quesno)
         print("In Post")
+        print("profile.lifeline2_status:",profile.lifeline2_status)
         
         qList = eval(profile.questionIndexList)
         if profile.isFirstTry:
@@ -150,11 +197,13 @@ def QuestionView(request):
 
             if str(givenAns) == str(currQues.answer):
 
-                if request.POST.get("line2Checked") and profile.lifeline2_checked == False:
+                if profile.lifeline2_status and profile.lifeline2_checked == False:
                     profile.lifeline2_checked = True
+                    profile.lifeline2_status = False
                     print("Timer Up")
                     profile.remainingTime += 300
-            
+                profile.correctanswers += 1
+                
                 profile.marks += 4
                 profile.quesno += 1
                 profile.isFirstTry = True
@@ -165,8 +214,7 @@ def QuestionView(request):
             
             else:
                 # CHANGE BACK
-                if request.POST.get("line2Checked") and profile.lifeline2_checked == False:
-                    profile.lifeline2_checked = True
+                if profile.lifeline2_status and profile.lifeline2_checked == False:                    
                     print("Timer Down")
                     profile.remainingTime -= 120    
                 profile.isFirstTry = False   
@@ -180,17 +228,20 @@ def QuestionView(request):
             tempSol.save()
             
             if str(givenAns) == str(currQues.answer):
-                if request.POST.get("line2Checked") and profile.lifeline2_checked == False:
+                if profile.lifeline2_status and profile.lifeline2_checked == False:
                     profile.lifeline2_checked = True
+                    profile.lifeline2_status = False
                     print("Timer Up")
                     profile.remainingTime += 300
                 profile.marks += 2
+                profile.correctanswers += 1
 
             else:
-                if request.POST.get("line2Checked") and profile.lifeline2_checked == False:
+                if profile.lifeline2_status and profile.lifeline2_checked == False:
                     profile.lifeline2_checked = True
+                    profile.lifeline2_status = False
                     print("Timer Down")
-                    profile.remainingTime -= 120
+                    profile.remainingTime -= 180
                 profile.marks -= 2
 
             
@@ -232,27 +283,48 @@ def leaderboard(request) :
     profile.save()
     return render(request, 'myapp_RC/result.html', context)
 
+def result(request):
+    context = {}
+    ruser = request.user
+    profile = Profile.objects.get(user = ruser)
+    context["profile"] = profile
+    context["users"] = list(Profile.objects.all().order_by('marks',"remainingTime").reverse())
+    context["rank"] = context["users"].index(profile) + 1
+    profile.logoutTime = datetime.datetime.now()
+    context["q_correct"] = ((profile.correctanswers)/(profile.quesno-1))*100
+    context["timetaken"] = ((1800 - profile.remainingTime)/profile.remainingTime) * 100
+    context["totalques"] = profile.quesno - 1
+
+    return render(request, 'myapp_RC/result.html', context)
+
+
+
 def lifelineone(request):
+    print("===")
     print("In Lifeline one")
     context = { }
     ruser = request.user
     profile = Profile.objects.get(user = ruser)
-
-    profile.lifeline1_count = 0
-    profile.simpleQuestionUsed = True
-    profile.lifeline1_status = True
+    profile.lifeline1_using = True
+    profile.lifeline1_count += 1
+    profile.lifeline1_status = False
+    print("(In l1 before post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
+    print("(In l1 before post)profile.lifeline1_status", profile.lifeline1_status)
 
     qList = eval(profile.questionIndexList)
 
-    profile.lifeline1_postcount += 1
-    print("postcount = ", profile.lifeline1_postcount)
-
+    context["easyQuestion"] = True
+    context["isSimpleQuestion"] = profile.simpleQuestionUsed
 
     context['currquestNum'] = profile.quesno
 
-    currQueslist = EasyQuestion.objects.all()
+    # currQueslist = EasyQuestion.objects.all()
 
-    currQuest = currQueslist[random.randrange(len(currQueslist))]
+    # currQuest = EasyQuestion.objects.get(easyquestion_no = (random.randrange(len(currQueslist))))
+    print("Iska value to ye hai ->", profile.lifeline1_question_id)
+    currQuest = EasyQuestion.objects.get(easyquestion_no = profile.lifeline1_question_id)
+    # currQuest = currQueslist[easyquestion_no=(random.randrange(len(currQueslist)).easyques)]
+    # currQuest = EasyQuestion.objects.get(easyquestion_no=qList[0])
 
     context["currquest"] = currQuest.easyquestion
     context["profile"] = profile
@@ -263,45 +335,124 @@ def lifelineone(request):
         profile.save()
         return redirect('Result')
     
-    if request.method == "POST":
-        print("LifeLine 1 Post REQ")
-        print("In lifeline POST")
-        
-        givenAns = request.POST["res1"]
-        profile.lifeline1_status = False
-        profile.lifeline1_postcount += 1
-
-        # givenAns = request.POST["res1"]
-
-        # tempSol = User_Response(user_profile = profile, quetionID = qList[0], response1 = givenAns, user = profile.user, isSimpleQuestion = False)
-        # tempSol.save()
-
-        tempSol = User_Response(user_profile = profile, quetionID = currQuest.easyquestion_no, response1 = givenAns, user = profile.user, isSimpleQuestion = True)
-        tempSol.save()
-
-        if str(givenAns) == str(currQuest.easyanswer):
-            profile.marks += 4
-        else:
-            profile.marks -= 4
-        
-        
-        profile.quesno += 1
-        profile.questionIndexList = str(qList[1:])
-        print("thursday now qlist = ", profile.questionIndexList)
-            
-        profile.save()
-    
-        request.method = "GET"
-        return QuestionView(request)    
-    
+    print("(In l1 after post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
+    print("(In l1 after post)profile.lifeline1_status", profile.lifeline1_status)
+    print("===")
+    profile.isFirstTry = True
+    profile.save()
     return render(request, 'myapp_RC/question.html', context)
 
-def lifeline2_ajax(request):
-    if request.method == 'POST':
-        ruser = request.user
-        profile = Profile.objects.get(user = ruser)
-        profile.lifeline2_status = True
-        profile.save()
-        print("ABC")
+def lifeLine3(request):
+    print("in L3")
+    print("======================")
+    ruser = request.user
+    profile = Profile.objects.get(user = ruser)
+    profile.lifeline3_status = False
+    profile.save()
+    if request.method == "GET":
+        userQuery = request.GET["question"]
+        allKeys = chatGPTLifeLine.objects.all()
+        allKeys2 = chatGPTLifeLine.objects.filter(isDepleted = False)
 
-        return JsonResponse({'success': True})
+        if len(allKeys2) == 0:
+            return JsonResponse({'question': {userQuery},'answer': "Somethingwentwrong1"})
+        
+        isproblem = True
+
+        #==== remove loop after testing=====
+        for k in allKeys:
+            print(k.key, k.numUsed, k.isDepleted)
+        #===================================
+        currentTime = time.time()
+
+        for key in allKeys2:
+            print(f"Key last used {currentTime - key.lastUsed} seconds ago")
+            print(f"{currentTime} - {key.lastUsed} = {currentTime - key.lastUsed}")
+            
+            if True:
+                if key.numUsed < 3:
+                    isproblem = False
+                    key.numUsed += 1
+                    key.lastUsed = time.time()
+                    key.save()
+                    break
+                else:
+                    print("Key is depleted")
+                    key.isDepleted = True
+                    key.save()
+            else:
+                print(f"is in use: {key}")
+
+        if isproblem:
+            return JsonResponse({'question': {userQuery},'answer': "Somethingwentwrong2"})
+        
+        answerResp = GPT_Link(userQuery, key= key)
+
+        return JsonResponse({'question': userQuery,'answer': answerResp})
+
+
+def GPT_Link(message, key):
+    URL = "https://api.openai.com/v1/chat/completions"
+
+    print(f"using key: {key}")
+
+    payload = {
+    "model": "gpt-3.5-turbo",
+    "messages": [{"role": "user", "content": message}],
+    "temperature" : 1.0,
+    "top_p":1.0,
+    "n" : 1,
+    "stream": False,
+    "presence_penalty":0,
+    "frequency_penalty":0,
+    }
+
+    headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {key}"
+    }
+
+    response = requests.post(URL, headers=headers, json=payload, stream=False)
+    print("Here==========",response.content)
+
+    # if "choices" not in json.loads(response.content):
+    #     return "Somethingwentwrong"
+    
+    return (json.loads(response.content)["choices"][0]['message']['content'])
+
+def test(request):
+
+    return render(request, "myapp_RC/ajaxcode1.html")
+
+def call(request):
+    allKeys = chatGPTLifeLine.objects.all()
+    for key in allKeys:
+        key.numUsed = 0
+        key.isDepleted = False
+        key.save()
+
+def tabswitch(request):
+    print("Inside Check-page function")
+
+    ruser = request.user
+    profile = Profile.objects.get(user = ruser)
+    profile.focuscount -= 1
+    profile.save()
+
+    print("focus = ", profile.focuscount)
+    
+    # if profile.focuscount <= 0 :
+    #     return redirect("/signout")
+
+    return JsonResponse({'context':int(profile.focuscount)})
+
+def lifeline2(request):
+    print("Inside l2 function")
+
+    ruser = request.user
+    profile = Profile.objects.get(user = ruser)
+    profile.lifeline2_status = True
+    profile.lifeline2_superstatus = False
+    profile.save()
+
+    return JsonResponse()

@@ -9,7 +9,7 @@ class Profile(models.Model):
 
     curr_question=models.IntegerField(default=1)
     questionIndexList = models.TextField(default="[-1]")
-
+    correctanswers = models.IntegerField(default=0)
     quesno = models.IntegerField(default=1)
     mob_no = models.CharField(max_length=12)
 
@@ -20,20 +20,26 @@ class Profile(models.Model):
 
     startTime = models.DateTimeField(null = True)
     tempTime = models.DateTimeField(null = True)
+    logoutTime = models.DateTimeField(null=True)
 
     # totalTime = 
 
     simpleQuestionUsed = models.BooleanField(default=False)
-    timeLLUsed = models.BooleanField(default=False)
     remainingTime = models.IntegerField(default = 1800)
 
     # lifeline one
     lifeline1_count = models.IntegerField(default=0)
     lifeline1_status = models.BooleanField(default=False)
-    lifeline1_postcount = models.IntegerField(default=0)
+    lifeline1_using = models.BooleanField(default=False)
+    lifeline1_question_id = models.IntegerField(default=0)
 
+    lifeline2_superstatus = models.BooleanField(default = True)
     lifeline2_status = models.BooleanField(default = False)
     lifeline2_checked = models.BooleanField(default = False)
+
+    lifeline3_status = models.BooleanField(default = True)
+
+    focuscount = models.IntegerField(default = 3)
 
     def __str__(self):
         return self.user.username
@@ -66,3 +72,13 @@ class EasyQuestion(models.Model):
     
     def __str__(self):
         return self.easyquestion
+    
+class chatGPTLifeLine(models.Model):
+    key = models.CharField(max_length=1000)
+    numUsed = models.IntegerField(default=0)
+    lastUsed = models.FloatField(default= 1700000000.213593)
+    isDepleted = models.BooleanField(default=False)
+    
+    
+    def __str__(self):
+        return self.key

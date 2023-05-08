@@ -10,7 +10,11 @@ urlpatterns = [
     path('signout/', views.signout, name = 'SignOut'),
     path('instruction/',views.instruction, name = 'Instruction'),
     path('question/', views.QuestionView, name = 'QuestionView1'),
-    path('result/', views.leaderboard, name = 'Result'),
+    path('result/', views.result, name = 'Result'),
     path('lifeline1/', views.lifelineone, name = 'lifeline1'),
-    path('lifeline2_ajax/', views.lifeline2_ajax, name='lifeline2_ajax'),  
+    path('lifeline3/', views.lifeLine3, name = 'lifeline3'),
+    path('test/', views.test, name = 'test'),
+    path('callTest/', views.call, name = 'callTest'),
+    path('tabswitch/', views.tabswitch, name = 'tabswitch'),
+    path('lifeline2/', views.lifeline2, name = 'lifeline2'),
 ]
