@@ -154,13 +154,23 @@ def QuestionView(request):
     context['plusmrks'] = 4
     context['minusmrks'] = 0
     context["profile"] = profile
-
+    
+    #HERE
+    print(request.POST)
+    print(request.GET)
     if request.method == 'GET':
-        if profile.isFirstTry == 1:
+        if profile.isFirstTry == 0:
             context["res1"] = profile.cache
+        context["currquest"] = currQues.question
+        context['plusmrks'] = 4
+        context['minusmrks'] = 0
+        context["profile"] = profile
         context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
         return render(request, 'myapp_RC/question.html',context)
-
+    #HERE 
+    
+    print("POST->",str(request.POST.get("submit", False)))
+    print("GET->",str(request.GET.get("submit", False)))
     if profile.quesno != 1:
         try:
             if profile.isFirstTry:
