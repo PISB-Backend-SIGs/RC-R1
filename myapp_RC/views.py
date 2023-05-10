@@ -144,10 +144,6 @@ def QuestionView(request):
     context = { }
     ruser = request.user
     profile = Profile.objects.get(user = ruser)
-    # print("dwer :",request.POST["submit"] )
-    
-    
-    # if request.POST.get('submit') == int(profile.quesno):
     
     context['currquestNum'] = profile.quesno
     qList = eval(profile.questionIndexList)
@@ -159,6 +155,17 @@ def QuestionView(request):
     context['minusmrks'] = 0
     context["profile"] = profile
 
+    try:
+        if profile.isFirstTry:
+            profile.cache = request.POST["res1"]
+            profile.save()
+        else:
+            # request.POST["res1"] =  profile.cache
+            t = request.POST["res2"]
+    except:
+        context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
+        return render(request, 'myapp_RC/question.html',context)
+    
     if profile.quesno == 1:
         profile.accuracy = (profile.correctanswers/(profile.quesno))*100
     else:
