@@ -17,9 +17,6 @@
     <p>
       <img src="{% static 'images/rclogo.png' %}" alt="RC" height="30px" width="40px">
     </p>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-    </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
       <!-- <a class="nav-item nav-link active" id="navlink" href="instructions.html">Instructions</a>
@@ -33,8 +30,19 @@
     <div class="container">
         <!-- <h2>REVERSE CODING - ROUND 1</h2> -->
         <h3>Leaderboard</h3>
-
       <div>
+        <section>
+          <input type="checkbox" id="switch">
+                <div class="content">
+                  <label for="switch">
+                    <div class="toggle"></div>
+                    <div class="names">
+                      <p class="light">Junior</p>
+                      <p class="dark">Senior</p>
+                    </div>
+                  </label>
+                </div>
+          </section>
         <table id = "members" class = "table table-bordered responsive-table order-column" style="border: none;">
           <thead>
               <tr class="table-header">
