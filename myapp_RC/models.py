@@ -9,10 +9,13 @@ class Profile(models.Model):
     correctanswers = models.IntegerField(default=0)
     quesno = models.IntegerField(default=1)
     mob_no = models.CharField(max_length=12)
+    plusmrks = models.IntegerField(default = 4)
+    minusmrks = models.IntegerField(default = 0)
     # res1notnull=models.BooleanField(default=False)
     # cur
 
     marks = models.IntegerField(default=0)
+    accuracy = models.FloatField(default=0)
 
 
     isFirstTry = models.BooleanField(default = True)

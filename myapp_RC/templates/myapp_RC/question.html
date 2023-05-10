@@ -184,6 +184,8 @@
 
             {% if profile.lifeline1_status %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal">Lifeline1</button>
+            {% elif profile.lifeline1_using %}
+            <button type="button" class="btn btn-info " data-bs-toggle="modal"  id="lf5" data-bs-target="#L1Modal" disabled>Activated</button>
             {% else %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal" disabled>Lifeline1</button>
             {% endif %}            
@@ -297,20 +299,28 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script>
+
+      function disableInput(){
+      document.getElementById('userQuestion').disabled = true;
+      document.getElementById('my-button').style.display = "none";
+      }
+
     function lifeline3Fun() {
 
       // Closing Lifeline 3 modal button
       $("#answerParagraph").text("Loading...");
+      
+      // documents.getElementById("my-button").style.display = "none";
       $.ajax({
             url: "{% url 'lifeline3' %}",
             dataType:"json",
             type: 'GET',
             data: {'question': document.getElementById("userQuestion").value},
             success: function(response) {
-                documents.getElementById("my-button").style.display = "none";
                 console.log("Success");
                 console.log(response);
                 $("#answerParagraph").text(response.answer);
+                disableInput();
             },
             error: function(xhr, status, error) {
                 $("#answerParagraph").text("Chat GPT error. Try sending your question again.");
@@ -344,7 +354,25 @@
         });
     }
     </script>
+<script>
+  var testduration=60*30;
+  var timer = setTimeout(function() {
+    $.ajax({
+        url: '/endExam/',
+        type: 'POST',
+        data: {
+            test_id: testId
+        },
+        success: function(response) {
+            
+        },
+        error: function(xhr, status, error) {
+            
+        }
+    });
+}, examDuration * 1000);
 
+</script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
   function savetimer() {
@@ -367,6 +395,7 @@
 
 
 </script>
+
 
 
     </div>      

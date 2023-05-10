@@ -227,24 +227,32 @@
 .c12 p{
     font-style: inherit;
     font-size: 1.4rem;
-    color: #09a6f5;
+    color: white;
     background-color: #081222;
     width: 100%;
-    border-top: 3px solid rgb(3, 255, 87);
-    border-bottom: 3px solid rgb(3, 255, 87);
-    /* border: 3px solid rgb(3, 255, 87); */
+    border-top: 3px solid aqua;
+    border-bottom: 3px solid aqua;
+    /* border: 3px solid aqua; */
 
 }
 #lf1{
     background-color: #011621;
-    color: #00eaff;
+    color: white;
+    border-color: aqua;
+    margin: 7px 5%;
+    font-size: 1.2rem;
+}
+
+#lf5{
+    background-color: #011621;
+    color: aqua;
     border-color: aqua;
     margin: 7px 5%;
     font-size: 1.2rem;
 }
 
 #lf1:hover{
-    border: 2px solid #08f4ac;
+    border: 2px solid aqua;
     scale: 1.1;
     transition: 0.5s;
 }
@@ -273,16 +281,16 @@
     overflow: hidden;
     background: #082934;
     color: white;
-    border: 3px solid #08f4ac;
+    border: 3px solid aqua;
     margin: auto 3%;
 }
 
 #btn-close{
     border: 2px solid navy;
-    background-color: #00fd5e;
+    background-color: aqua;
 }
 #btn-close:hover{
-    background-color: #00eaff;
+    background-color: white;
 }
 
 .l2{
@@ -325,14 +333,14 @@
 }
 
 #activate{
-    color: #00eaff;
+    color: white;
     background-color: #082934;
     border: 2px solid rgb(1, 81, 81);
     align-self: center;
     margin-top: 0!important;
 }
 #activate:hover{
-    box-shadow: 1px 1px 5px #00eaff, -1px -1px 5px #00eaff, 1px 1px 5px #00eaff;
+    box-shadow: 1px 1px 5px white, -1px -1px 5px white, 1px 1px 5px white;
 }
 
 #check{
@@ -345,15 +353,15 @@
     
 }
 #exampleModalLabel{
-    color: lightblue;
+    color: white;
     align-self: center;
     font-size: 1.4rem;
 }
 
 .modal-body{
-    border-top:2px solid #00fd5e;
-    border-top:2px solid #08f4ac;
-    border-bottom:2px solid #08f4ac;
+    border-top:2px solid aqua;
+    border-top:2px solid aqua;
+    border-bottom:2px solid aqua;
 }
 
 .modal-footer{
@@ -372,7 +380,7 @@
     width:84%;  
     padding: 5px;
     padding-left: 11px;
-    color: #00fd5e;
+    color: aqua;
     outline: none;
 }
 
@@ -381,7 +389,7 @@
     flex-direction: row;
     justify-content: center;
     padding: 1rem;
-    border-bottom: 3px solid #08f4ac;
+    border-bottom: 3px solid aqua;
     text-align: left;
 }
 .chatresponse p{
@@ -412,19 +420,19 @@
 }
 
 ::-webkit-scrollbar-thumb:hover{
-     background: #08f4ac;
+     background: aqua;
 }
 
 
 #close{
-    color: #00fd5e;
+    color: aqua;
     background-color: #000000;
     border: 2px solid cyan;
     border-radius: 5px;
     align-self: center;
 }
 #close:hover{
-    box-shadow: 1px 1px 7px #00fd5e,-1px -1px 7px #00fd5e,1px 1px 7px #00fd5e;
+    box-shadow: 1px 1px 7px aqua,-1px -1px 7px aqua,1px 1px 7px aqua;
     scale: 1.1;
 }
 #my-button{
@@ -474,18 +482,18 @@
 
 .tb1 th{
     font-weight: 500;
-    color: lightblue;
+    color: white;
     padding: 5px;
 }
 .tb1 td{
     color: rgb(171, 150, 253);
     padding: 5px;
     align-content: center;
-    /* border: 2px solid #08f4ac; */
+    /* border: 2px solid aqua; */
 }
 
 #tb1{
-    border:2px solid #77fad3;
+    border:2px solid aqua;
     border-radius: 3px;
 }
 
@@ -497,14 +505,14 @@
 #marksce td{
     /* margin-top: 2px; */
     width: 50%;
-    border: 2px solid #08f4ac;
+    border: 2px solid aqua;
     border-top: 0;
 }
 #marksce td:nth-child(1){
-    border-right: 2px dashed rgb(119, 119, 6);
+    border-right: 2px dashed aqua;
 }
 #marksce td:nth-child(2){
-    border-left: 2px dashed rgb(119, 119, 6);
+    border-left: 2px dashed aqua;
 }
 
 .sec{
@@ -582,7 +590,7 @@
 .qh {
     padding-top: 10px;
     font-size: 20px;
-    color: #08f4ac;
+    color: aqua;
 }
 .question{
     height: 400px;
@@ -657,7 +665,7 @@
 
 .res1{
     padding: 10px;
-    border: 2px solid aquamarine;
+    border: 2px solid aqua;
     background-color: rgb(1, 29, 29);
     color: white;
     text-align: center;
@@ -665,7 +673,7 @@
 
 .res2 {
     padding: 10px;
-    border: 2px solid aquamarine;
+    border: 2px solid aqua;
     /* border: 2px solid #ff0; */
     background-color: rgb(1, 29, 29);
     color: white;
@@ -678,7 +686,7 @@
 
 .res1,.res2{
     background-color: 5px solid linear-gradient(rgba(0, 25, 50, 0.5), rgba(0, 0, 25, 0.5));
-    height: 40px;
+    height: 30px;
     margin: 8px 0;
     box-sizing: border-box;
     border-radius: 10px;
@@ -690,16 +698,16 @@
     border-radius: 5px;
     margin-top: 10px;
 }
-.submit{
+.submit {
     text-decoration: none;
     margin-right: 30px;
-    color: aqua;
+    color: white;
     font-weight: 600;
     font-size: 1.2rem;
     transition: .4s;
-    border: 2px solid #0307fa;
+    border: 2px solid aqua;
     background-color: inherit;
-    padding: 10px 20px;
+    padding: 3px 16px;
     border-radius: 5px;
 }
 .submit:hover{
@@ -796,7 +804,8 @@
     .ieeelogo{
         display: none!important;
     }
-    #lf1{
+    #lf1,
+    #lf5{
         width: 80%;
         margin: 8px auto;
     }
@@ -811,6 +820,7 @@
         margin: 14px auto;
     }
 }
+
 
 .footer{
     display: flex;
