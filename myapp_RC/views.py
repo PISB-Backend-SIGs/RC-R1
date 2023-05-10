@@ -177,7 +177,7 @@ def QuestionView(request):
     if profile.accuracy > 50 and profile.quesno > 3 and profile.lifeline3_status == False:
         profile.lifeline3_status = True
     
-    if profile.lifeline1_count == 3 and profile.simpleQuestionUsed == False and profile.lifeline1_using == False:
+    if profile.lifeline1_count == 3  and profile.lifeline1_using == False:
         profile.lifeline1_status = True
         currQueslist = EasyQuestion.objects.all()
         profile.lifeline1_question_id = (random.randrange(len(currQueslist)))
