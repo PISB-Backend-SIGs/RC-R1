@@ -23,17 +23,14 @@
         <a href="#">
           <img src="{% static 'images/rclogo.png' %}" alt="RC" height="30px" width="40px">
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
           <button type="button" class="btn btn-info" id="instruct" data-bs-toggle="modal" data-bs-target="#lbModal">INSTRUCTIONS</button>
           <button type="button" class="btn btn-info" id="instruct" data-bs-toggle="modal" data-bs-target="#lbModal">LEADERBOARD</button> 
-          <!-- <a class="nav-item nav-link active" id="navlink" href="question.html">Result</a> -->
-          <a class="nav-item nav-link active" id="navlink" href="{% url 'SignOut' %}">Submit Test</a>
+          <button type="button" class="btn btn-info" id="instruct" data-bs-toggle="modal" data-bs-target="#STModal">SUBMIT TEST</button>
         </div>
-        <img src="{% static 'images/pisblogo.png' %}"  height="40px" width="100px" alt="PISB IEEE" style="float: right;">>
+        <img src="{% static 'images/pisblogo.png' %}"  height="40px" width="100px" alt="PISB IEEE" style="float: right; margin-left: 10px;">>
         </nav>
   
       <!-- Body -->
@@ -107,13 +104,13 @@
                 <h5 class="modal-title" id="exampleModalLabel">Second Chance</h5>
                 <!-- <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
-                <div class="modal-body" id="test" onmousedown='return false;' onselectstart='return false;'>
+                <div class="modal-body" id="test" onmousedown='return false;' onselectstart='return false;'>
                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corrupti sequi eaque alias exercitationem cum a, cumque repellat libero. Exercitationem ex cumque beatae quod odit, atque reiciendis. Laborum nihil unde blanditiis nulla doloremque iusto earum ratione accusamus animi! Odio doloribus ea ipsam dicta quaerat veniam laboriosam odit ex, blanditiis cumque quos perferendis natus distinctio illo quo. Modi, architecto eius ipsam corrupti nesciunt eos, voluptate aperiam nisi doloribus amet quidem iusto quasi recusandae maiores laudantium sequi. Nobis error ipsam illo numquam dolorem nisi suscipit ab tempora! Consectetur voluptatem sit totam fugiat corrupti, asperiores iure. Dolorem architecto inventore exercitationem nobis, nisi perspiciatis esse.
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="close" data-bs-dismiss="modal">Close</button>
                 <form action="{% url 'lifeline1' %}">
-                  <button type="submit" class="btn btn-primary">Activate</button>
+                  <button type="submit" class="btn btn-primary" id="activate">Activate</button>
                   {% csrf_token %}
                 </form>
                 </div>
@@ -177,7 +174,28 @@
                 </div>
             </div>
             </div>                                                 
-        </div >
+          </div>
+
+          <!-- SubmitTest Modal -->
+          <div class="modal fade" id="STModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
+            <div class="modal-dialog modal-xs modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="test" onmousedown='return false;' onselectstart='return false;'>
+                Do you really want to end this test
+                </div >
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="close" data-bs-dismiss="modal">Close</button>
+                <form action = "/result">
+                  <button id="STfinal" class="btn btn-primary" data-bs-dismiss="modal">Confirm</button>
+                </form>
+                </div>
+            </div>
+            </div>
+          </div>
 
           <div class="c12">
             <p>Lifelines</p>
