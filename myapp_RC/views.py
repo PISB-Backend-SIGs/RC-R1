@@ -155,19 +155,28 @@ def QuestionView(request):
     context['minusmrks'] = 0
     context["profile"] = profile
 
-    print(request.POST)
+    if request.method == 'GET':
+        if profile.isFirstTry == 1:
+            context["res1"] = profile.cache
+        context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
+        return render(request, 'myapp_RC/question.html',context)
+
     if profile.quesno != 1:
         try:
             if profile.isFirstTry:
+                print("if")
                 profile.cache = request.POST["res1"]
                 profile.save()
             else:
                 # request.POST["res1"] =  profile.cache
+                print("else")
+                print(profile.cache)
                 t = request.POST["res2"]
         except:
+            print("RELOAD except")
+            context["res1"] = profile.cache
             context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
             return render(request, 'myapp_RC/question.html',context)
-    
 
     if profile.quesno == 1:
         profile.accuracy = (profile.correctanswers/(profile.quesno))*100
