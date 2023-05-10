@@ -182,25 +182,29 @@
           <div class="c12">
             <p>Lifelines</p>
 
-            {% if profile.lifeline1_status %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal">Lifeline1</button>
-            {% elif profile.lifeline1_using %}
+            {% if profile.lifeline1_using %}
             <button type="button" class="btn btn-info " data-bs-toggle="modal"  id="lf5" data-bs-target="#L1Modal" disabled>Activated</button>
+            {% elif profile.lifeline1_status %}
+            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal">Lifeline1</button>
             {% else %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal" disabled>Lifeline1</button>
             {% endif %}            
             
-            {% if profile.lifeline2_superstatus %}
+            {% if profile.lifeline1_using %}
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal" disabled>Lifeline2</button>
+            {% elif profile.lifeline2_superstatus %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal">Lifeline2</button>
             {% else %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf1" data-bs-target="#L2Modal" disabled>Lifeline2</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal" disabled>Lifeline2</button>
             {% endif %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf6" data-bs-target="#L2Modal" disabled>Activated</button>
 
-            {% if profile.lifeline3_status %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf1" data-bs-target="#L3Modal">Lifeline3</button>
+            {% if profile.lifeline1_using %}
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf3" data-bs-target="#L3Modal" disabled>Lifeline3</button>
+            {% elif profile.lifeline3_status %}
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf3" data-bs-target="#L3Modal">Lifeline3</button>
             {% else %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf1" data-bs-target="#L3Modal" disabled>Lifeline3</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf3" data-bs-target="#L3Modal" disabled>Lifeline3</button>
             {% endif %}
           </div>
 
@@ -214,7 +218,7 @@
           <div class="queshead">       
             <h2 class="qh">Question No. {{ profile.quesno }}</h2>            
           </div>
-          <div class="question" id="test" onmousedown='return false;' onselectstart='return false;'>
+          <div class="question" id="test" onmousedown='return false;' onselectstart='return false;'>
             <p>{{ currquest }}</p>
           </div>
           {% if profile.isFirstTry%}
@@ -305,12 +309,15 @@
       document.getElementById('my-button').style.display = "none";
       }
 
+      function disable12(){
+      document.getElementById('lf1').disabled = true;
+      document.getElementById('lf2').disabled = true;
+      }
+
     function lifeline3Fun() {
 
-      // Closing Lifeline 3 modal button
       $("#answerParagraph").text("Loading...");
-      
-      // documents.getElementById("my-button").style.display = "none";
+      disable12();      
       $.ajax({
             url: "{% url 'lifeline3' %}",
             dataType:"json",
@@ -341,9 +348,14 @@
       document.getElementById('lf6').disabled = true;
       document.getElementById('lf2').style.display = "none";
       }
+
+      function disable13(){
+      document.getElementById('lf1').disabled = true;
+      document.getElementById('lf3').disabled = true;
+      }
       
       function checkHiddenCheckbox() {
-
+      disable13();
       $.ajax({
             url: "{% url 'lifeline2' %}",
             dataType:"json",

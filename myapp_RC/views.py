@@ -177,7 +177,7 @@ def QuestionView(request):
     #         # return render(request, 'myapp_RC/question.html',context)
     #         print("-----------------------------------------",x1,profile.quesno)
     
-    if profile.accuracy > 50 and profile.quesno > 3 and profile.lifeline3_status == False:
+    if profile.accuracy > 50 and profile.quesno > 3 and profile.lifeline3_status == False and profile.lifeline3_used == False:
         profile.lifeline3_status = True
     
     if profile.lifeline1_count == 3 and profile.lifeline1_using == False:
@@ -373,7 +373,7 @@ def result(request):
         context["timetaken"] = round(((1800 - profile.remainingTime)/1800) * 100,2)
         context["totalques"] = profile.quesno - 1
     except :
-        return redirect(QuestionView)
+        return redirect('SignIn')
 
     return render(request, 'myapp_RC/result.html', context)
 
@@ -431,12 +431,15 @@ def lifelineone(request):
 
 
 def lifeLine3(request):
+    ruser = request.user
+    profile = Profile.objects.get(user = ruser)
+    profile.lifeline3_status = False
+    profile.lifeline3_used = True
+    profile.save()
+    print("---")
     try :
         print("in L3")
         print("======================")
-        ruser = request.user
-        profile = Profile.objects.get(user = ruser)
-        profile.lifeline3_status = False
         profile.lifeline3_used = True
         profile.save()
         if request.method == "GET":

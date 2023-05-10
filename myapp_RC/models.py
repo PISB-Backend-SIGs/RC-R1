@@ -42,6 +42,7 @@ class Profile(models.Model):
     lifeline2_checked = models.BooleanField(default = False)
 
     lifeline3_status = models.BooleanField(default = True)
+    lifeline3_used = models.BooleanField(default = False)
 
     def __str__(self):
         return self.user.username

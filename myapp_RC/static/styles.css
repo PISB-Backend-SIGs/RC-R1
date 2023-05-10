@@ -236,7 +236,8 @@
 
 }
 #lf1,
-#lf2{
+#lf2,
+#lf3{
     background-color: #011621;
     color: white;
     border-color: aqua;
@@ -247,7 +248,7 @@
 #lf5{
     background-color: #011621;
     color: rgb(0, 255, 4);
-    border-color: rgb(0, 255, 4);
+    border: 4px solid rgb(0, 255, 4);
     margin: 7px 5%;
     font-size: 1.2rem;
 }
@@ -256,12 +257,14 @@
     display: none;
     background-color: #011621;
     color: rgb(0, 255, 4);
-    border-color: rgb(0, 255, 4);
+    border: 4px solid rgb(0, 255, 4);
     margin: 7px 5%;
     font-size: 1.2rem;
 }
 
-#lf1:hover{
+#lf1:hover,
+#lf2:hover,
+#lf3:hover{
     border: 2px solid aqua;
     scale: 1.1;
     transition: 0.5s;
@@ -817,7 +820,8 @@
     #lf1,
     #lf5,
     #lf6,
-    #lf2{
+    #lf2,
+    #lf3{
         width: 80%;
         margin: 8px auto;
     }
