@@ -135,7 +135,7 @@
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" id="close" data-bs-dismiss="modal">Close</button>
                 <div rel="stylesheet" class="l2 action" id="lifelinesecond">
-                  <button id="activate" class="btn btn-primary" onclick="checkHiddenCheckbox()">Activate</button>                   
+                  <button id="activate" class="btn btn-primary" onclick="checkHiddenCheckbox()" data-bs-dismiss="modal">Activate</button>                   
                 </div>
                 </div>
             </div>
@@ -191,10 +191,11 @@
             {% endif %}            
             
             {% if profile.lifeline2_superstatus %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf1" data-bs-target="#L2Modal">Lifeline2</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal">Lifeline2</button>
             {% else %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf1" data-bs-target="#L2Modal" disabled>Lifeline2</button>
-            {% endif %}       
+            {% endif %}
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf6" data-bs-target="#L2Modal" disabled>Activated</button>
 
             {% if profile.lifeline3_status %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf1" data-bs-target="#L3Modal">Lifeline3</button>
@@ -273,7 +274,6 @@
           function countdown(seconds) {
             
             displayTime(seconds);
-        
             
             var timer = setInterval(function() {
               seconds--;
@@ -334,11 +334,15 @@
     </script>
 
     <script>
-      function checkHiddenCheckbox() {
 
-      var l2button = getElementById('lf1');
-      modal.hide();
-      l2button.addClass('disabled');
+      function disablenewInput(){
+      document.getElementById('L2Modal').style.display = "none";
+      document.getElementById('lf6').style.display = "block";
+      document.getElementById('lf6').disabled = true;
+      document.getElementById('lf2').style.display = "none";
+      }
+      
+      function checkHiddenCheckbox() {
 
       $.ajax({
             url: "{% url 'lifeline2' %}",
@@ -347,6 +351,7 @@
             data: {},
             success: function(response) {
                 console.log("Success");
+                disablenewInput();
             },
             error: function(xhr, status, error) {
                 console.log(error);

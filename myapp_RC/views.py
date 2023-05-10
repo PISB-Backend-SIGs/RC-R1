@@ -114,28 +114,31 @@ def signin(request):
     return render( request, "myapp_RC/signin.html")
 
 def signout(request):
-    ruser = request.user
-    profile = Profile.objects.get(user = ruser)
-    profile.remainingTime = profile.remainingTime -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None)).seconds 
-    profile.logoutTime = datetime.datetime.now()
-    logout(request)
-    messages.success(request, "Logged out successfully!")
-    return redirect('/home')
+    try :
+        ruser = request.user
+        profile = Profile.objects.get(user = ruser)
+        profile.remainingTime = profile.remainingTime -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None)).seconds 
+        profile.logoutTime = datetime.datetime.now()
+        logout(request)
+        messages.success(request, "Logged out successfully!")
+        return redirect('/home')
+    except :
+        return redirect('/home')
 
 @login_required(login_url = 'SignIn')
 def instruction(request):
-    # try :
-    if request.method == 'POST':
-        ruser = request.user
-        profile = Profile.objects.get(user = ruser)
-        profile.startTime = datetime.datetime.now()
-        profile.save()
-        print("profile.startTime :",profile.startTime)
-        request.method = "GET"
-        return QuestionView(request)
-    # except :
-    #     print("ithe allo .....")
-    #     return redirect('Instruction')
+    try :
+        if request.method == 'POST':
+            ruser = request.user
+            profile = Profile.objects.get(user = ruser)
+            profile.startTime = datetime.datetime.now()
+            profile.save()
+            print("profile.startTime :",profile.startTime)
+            request.method = "GET"
+            return QuestionView(request)
+    except :
+        print("ithe allo .....")
+        return redirect('Instruction')
     return render(request,"myapp_RC/instruction.html")
 
 @login_required(login_url = 'SignIn')
@@ -177,10 +180,13 @@ def QuestionView(request):
     if profile.accuracy > 50 and profile.quesno > 3 and profile.lifeline3_status == False:
         profile.lifeline3_status = True
     
-    if profile.lifeline1_count == 3  and profile.lifeline1_using == False:
+    if profile.lifeline1_count == 3 and profile.lifeline1_using == False:
+        print("In here qid generation")
         profile.lifeline1_status = True
         currQueslist = EasyQuestion.objects.all()
         profile.lifeline1_question_id = (random.randrange(len(currQueslist)))
+        print("EASY QID: ", profile.lifeline1_question_id)
+        profile.save()
     
     if profile.isFirstTry == False :
         context["resp1"] = User_Response.objects.get(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).response1
@@ -527,7 +533,7 @@ def lifeline2(request):
     profile.lifeline2_superstatus = False
     profile.save()
 
-    return JsonResponse()
+    return JsonResponse({'success':'True'})
        
   
 def webadmin(request) :

@@ -235,7 +235,8 @@
     /* border: 3px solid aqua; */
 
 }
-#lf1{
+#lf1,
+#lf2{
     background-color: #011621;
     color: white;
     border-color: aqua;
@@ -245,8 +246,17 @@
 
 #lf5{
     background-color: #011621;
-    color: aqua;
-    border-color: aqua;
+    color: rgb(0, 255, 4);
+    border-color: rgb(0, 255, 4);
+    margin: 7px 5%;
+    font-size: 1.2rem;
+}
+
+#lf6{
+    display: none;
+    background-color: #011621;
+    color: rgb(0, 255, 4);
+    border-color: rgb(0, 255, 4);
     margin: 7px 5%;
     font-size: 1.2rem;
 }
@@ -805,7 +815,9 @@
         display: none!important;
     }
     #lf1,
-    #lf5{
+    #lf5,
+    #lf6,
+    #lf2{
         width: 80%;
         margin: 8px auto;
     }
