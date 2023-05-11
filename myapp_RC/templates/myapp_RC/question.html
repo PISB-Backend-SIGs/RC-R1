@@ -252,7 +252,7 @@
             </div>
             <div class="sub">
               <!-- <button type="submit" class="submit">Next</button> -->
-              <button type="submit" name="submit" class="submit" value="{{profile.quesno}}">Next</button>
+              <button type="submit" name="submit" class="submit" id="next" value="{{profile.quesno}}">Next</button>
 
             </div>
             {% else %}
@@ -269,7 +269,7 @@
               <div class="sub">
               <!-- <button type="submit" class="submit">Next</button> -->
 
-                <button type="submit" name="submit" class="submit" value="{{profile.quesno}}">Next</button>
+                <button type="submit" name="submit" class="submit" id="next" value="{{profile.quesno}}">Next</button>
               </div>
             {% endif %}
         </form>
@@ -286,37 +286,6 @@
         function noback(){
           window.history.forward();
         }
-      </script>
-      
-      <script>
-        
-        const button = document.getElementById('myButton');
-        
-
-          function countdown(seconds) {
-            
-            displayTime(seconds);
-            
-            var timer = setInterval(function() {
-              seconds--;
-              displayTime(seconds);
-              if (seconds <= 0) {
-                clearInterval(timer);
-              }
-            }, 1000);
-        
-            function displayTime(seconds) {
-              
-              var minutes = Math.floor(seconds / 60);
-              var remainingSeconds = seconds % 60;
-        
-              
-              var formattedTime = ('0' + minutes).slice(-2) + ':' + ('0' + remainingSeconds).slice(-2);
-        
-              document.getElementById('timer').textContent = formattedTime;
-            }
-          }
-          countdown("{{second1}}");
       </script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -410,6 +379,49 @@
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
+
+const button = document.getElementById('myButton');
+        
+
+        function countdown(seconds) {
+          
+          displayTime(seconds);
+      
+          
+          var timer = setInterval(function() {
+            seconds--;
+            displayTime(seconds);
+            if (seconds <= 0) {
+              clearInterval(timer);
+            }
+            console.log("{{profile.remainingTime}}")
+          }, 1000);
+      
+          function displayTime(seconds) {
+            
+            var minutes = Math.floor(seconds / 60);
+            var remainingSeconds = seconds % 60;
+            if (remainingSeconds <=0 && minutes <=0){
+              console.log("Idhar")
+              const int_input = document.querySelectorAll('input[type = "number"]');
+              int_input.forEach((variable) =>{
+                variable.required = false
+                console.log("input here")
+              });
+              var formattedTime = '00'+ ':' + ('00');
+              var end_session = document.getElementById('STfinal');
+              // end_session.name = "next"
+              end_session.click();
+              console.log("Udhar")
+              clearInterval(displayTime());
+            }
+            var formattedTime = ('0' + minutes).slice(-2) + ':' + ('0' + remainingSeconds).slice(-2);
+      
+            document.getElementById('timer').textContent = formattedTime;
+          }
+        }
+        countdown("{{second1}}");
+
   function savetimer() {
     $.ajax({
       url: "{% url 'Savetimer' %}",
@@ -418,7 +430,7 @@
       data: {
       },
       success: function(response) {
-        console.log("Success");
+        console.log("success");
       },
       error: function(xhr, status, error) {
         console.log(error);
@@ -427,11 +439,7 @@
   }
   // Call the savetimer() function every 5 seconds
   setInterval(savetimer, 5000);
-
-
 </script>
-
-
 
     </div>      
   </body>

@@ -162,6 +162,11 @@ def QuestionView(request):
     context['minusmrks'] = 0
     context["profile"] = profile
 
+    # if "next" in request.POST:
+    #     profile.logoutTime = datetime.datetime.now()
+    #     profile.save()
+    #     return redirect('Result')
+
     if profile.quesno == 1:
         profile.accuracy = (profile.correctanswers/(profile.quesno))*100
     else:
@@ -269,6 +274,7 @@ def QuestionView(request):
                     profile.lifeline2_status = False
                     print("Timer Up")
                     profile.remainingTime += 300
+                    profile.save()
                 profile.correctanswers += 1
                 
                 profile.marks += 4
@@ -369,7 +375,7 @@ def result(request):
         context["users"] = list(Profile.objects.all().order_by('marks',"remainingTime").reverse())
         context["rank"] = context["users"].index(profile) + 1
         profile.logoutTime = datetime.datetime.now()
-        context["q_correct"] = round(((profile.correctanswers)/(profile.quesno-1))*100,2)
+        context["q_correct"] = profile.accuracy
         context["timetaken"] = round(((1800 - profile.remainingTime)/1800) * 100,2)
         context["totalques"] = profile.quesno - 1
     except :
@@ -391,8 +397,8 @@ def lifelineone(request):
     print("(In l1 before post)profile.simpleQuestionUsed = ", profile.simpleQuestionUsed)
     print("(In l1 before post)profile.lifeline1_status", profile.lifeline1_status)
     
-    context["plusmrks"] = 4
-    context['minusmrks'] = -4
+    profile.plusmrks = 4
+    profile.minusmrks = -4
     context['plusmrks'] = profile.plusmrks
     context['minusmrks'] = profile.minusmrks
     qList = eval(profile.questionIndexList)
@@ -577,8 +583,5 @@ def savetimer(request) :
         context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds 
         profile.startTime = datetime.datetime.now()
         profile.remainingTime = context["second1"]
-        if profile.remainingTime <= 0 or profile.remainingTime >= 2500:
-            logout(request)
-            return render(request, 'myapp_RC/signin.html', context)
         profile.save()
         return JsonResponse({'success':'True'})
