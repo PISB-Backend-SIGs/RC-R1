@@ -31,7 +31,7 @@
           <button type="button" class="btn btn-info" id="instruct" data-bs-toggle="modal" data-bs-target="#lbModal">INSTRUCTIONS</button>
           <button type="button" class="btn btn-info" id="instruct" data-bs-toggle="modal" data-bs-target="#lbModal">LEADERBOARD</button> 
           <!-- <a class="nav-item nav-link active" id="navlink" href="question.html">Result</a> -->
-          <a class="nav-item nav-link active" id="navlink" href="{% url 'SignOut' %}">Submit Test</a>
+          <a class="nav-item nav-link active" id="navlink" href="{% url 'SignOut' %}" name = "submit_and_signout">Submit Test</a>
         </div>
         <img src="{% static 'images/pisblogo.png' %}"  height="40px" width="100px" alt="PISB IEEE" style="float: right;">>
         </nav>
@@ -218,7 +218,7 @@
           </div>
           {% if profile.isFirstTry%}
             <div class="responses">
-              <div class="opt1">
+              <div class="opt1">.
                 Response 1 :
                 <input type="number" name="res1" class="res1" id="res1" required>
               </div>
@@ -234,7 +234,7 @@
             </div>
             {% else %}
               <div class="responses">
-                <div class="opt1">
+                <div class="opt1">:
                   Response 1 : 
                   <input type="number" name="res1" class="res1" id="res1" disabled placeholder="{{ profile.cache }}">
                 </div>
@@ -290,8 +290,17 @@
         
               
               var formattedTime = ('0' + minutes).slice(-2) + ':' + ('0' + remainingSeconds).slice(-2);
-        
               document.getElementById('timer').textContent = formattedTime;
+
+              console.log(formattedTime);
+              
+              if (remainingSeconds == 0 && remainingSeconds == 0){
+                const xmlhttp = new XMLHttpRequest();
+                console.log('minutes:',minutes, "seconds:", remainingSeconds);
+                // location.reload();
+                // submit_and_signout
+                document.getElementsByName("submit_and_signout").click();
+              }
             }
           }
           countdown("{{second1}}");
@@ -392,8 +401,6 @@
   }
   // Call the savetimer() function every 5 seconds
   setInterval(savetimer, 5000);
-
-
 </script>
 
 

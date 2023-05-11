@@ -17,7 +17,7 @@ class Profile(models.Model):
     marks = models.IntegerField(default=0)
     accuracy = models.FloatField(default=0)
     cache = models.IntegerField(default=0)
-
+    cacheAnswer = models.IntegerField(default=-1)
 
     isFirstTry = models.BooleanField(default = True)
     isTimeOut = models.BooleanField(default = False)
