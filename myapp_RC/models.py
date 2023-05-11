@@ -42,8 +42,9 @@ class Profile(models.Model):
     lifeline2_superstatus = models.BooleanField(default = True)
     lifeline2_status = models.BooleanField(default = False)
     lifeline2_checked = models.BooleanField(default = False)
+    lifeline2_secondattempt = models.BooleanField(default = False)
 
-    lifeline3_status = models.BooleanField(default = True)
+    lifeline3_status = models.BooleanField(default = False)
     lifeline3_used = models.BooleanField(default = False)
 
     def __str__(self):

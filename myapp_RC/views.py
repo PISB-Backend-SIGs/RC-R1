@@ -67,7 +67,7 @@ def signup(request):
         return redirect('/signup')
     return render(request, "myapp_RC/signup.html")
 
-def signin(request):
+def signin1(request):
     context ={}
     try :
         if request.method == 'POST':
@@ -113,6 +113,127 @@ def signin(request):
         return redirect ('SignIn')
 
     return render( request, "myapp_RC/signin.html")
+
+
+################################################
+
+def signin(request):
+    # try:
+        if request.method == 'POST':
+            print("aaya")
+            username = request.POST['username']
+            pass1 = request.POST['pass1']
+            isTeam = request.POST.get('flexRadioDefault')
+            print(isTeam,username)
+            if isTeam == "1":
+                isTeam = True
+            else:
+                isTeam = False
+            print(isTeam, "isteam", type(isTeam))
+        
+            user = authenticate(username = username, password = pass1)
+
+            if user is not None:
+                login(request, user)
+                fname = user.first_name
+
+                # =====================
+                profile = Profile.objects.get(user = user)
+
+                if profile.category == True:   # True for Junior
+                    allQues = Question.objects.filter(is_junior = True)
+                else:   #False for Senior
+                    allQues = Question.objects.filter(is_junior = False)
+                
+
+                queIndex = [q.id for q in allQues]
+                random.shuffle(queIndex)
+
+                queIndex = queIndex[:11]
+
+                profile.questionIndexList = str(queIndex)
+                # if profile.newlogin == False :
+                #     profile.newlogin = True
+                # else :
+                #     messages.error(request, "Already Logged in via other device")
+                #     return render(request, 'myapp_RC/signin.html', context)
+                profile.save()
+                # =====================
+                return redirect('Instruction')
+
+            else:
+                url = 'https://api.credenz.in/api/verify/user/'
+                headers = {'Content-Type': 'application/json'}
+
+                data = {
+                    'username': username,
+                    'password': pass1,
+                    'event': 'clash',
+                }
+                
+                if isTeam:
+                    data['is_team'] = "true"
+                    print("here")
+                else:
+                    data['is_team'] = None # empty string
+
+                response = requests.post(url, headers=headers, json=data)
+                print("json  ",json)
+                
+                if response.status_code == 200:
+                    print("mai aagya")
+                    response = response.json()
+                    user = User.objects.create_user(username=username, password=pass1 )
+                    if not isTeam:
+                        try:
+                            category = not response['user']['senior']
+                            first_name = response['user']['first_name']
+                            last_name = response['user']['last_name']
+                        except:
+                            messages.error(request, "Invalid Credentials")
+                            return redirect('SignIn')
+                    else: # if team
+                        category = True
+                        first_name = response['users'][0]['first_name']
+                        last_name = response['users'][0]['last_name']
+
+                        # display name
+                        display_name = ""
+                        for user1 in response['users']:
+                            display_name += user1['username'] + " &"
+                            if user1['senior']:
+                                category = False
+                        display_name = display_name[:-2]
+                        print(display_name)
+                    profile = Profile(user=user, category=category)
+                    profile.save()
+                    if profile.category == True:   # True for Junior
+                        allQues = Question.objects.filter(is_junior = True)
+                    else:   #False for Senior
+                        allQues = Question.objects.filter(is_junior = False)
+                
+
+                    queIndex = [q.id for q in allQues]
+                    random.shuffle(queIndex)
+
+                    queIndex = queIndex[:11]
+
+                    profile.questionIndexList = str(queIndex)
+                    profile.save()      
+                    
+                    login(request, user)
+                    messages.success(request, "Login Successful")
+                    return redirect('Instruction')
+                messages.error(request, "Bad Credentials")
+                return redirect('SignIn')
+    # except :
+        # return redirect ('SignIn')        
+    
+
+        return render( request, "myapp_RC/signin.html")
+
+###########################################
+
 
 def signout(request):
     try :
@@ -164,6 +285,14 @@ def QuestionView(request):
     context['minusmrks'] = 0
     context["profile"] = profile
 
+    if profile.lifeline1_count == 3 and profile.lifeline1_using == False:
+        print("In here qid generation")
+        profile.lifeline1_status = True
+        currQueslist = EasyQuestion.objects.all()
+        profile.lifeline1_question_id = (random.randrange(len(currQueslist)))
+        print("EASY QID: ", profile.lifeline1_question_id)
+        profile.save()
+
     print(request.POST)
     print(request.GET)
     if request.method == 'GET':
@@ -171,8 +300,8 @@ def QuestionView(request):
         if profile.isFirstTry == 0:
             context["res1"] = profile.cache
         context["currquest"] = currQues.question
-        context['plusmrks'] = 4
-        context['minusmrks'] = 0
+        context['plusmrks'] = profile.plusmrks
+        context['minusmrks'] = profile.minusmrks
         context["profile"] = profile
         context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
         return render(request, 'myapp_RC/question.html',context)
@@ -209,16 +338,9 @@ def QuestionView(request):
     context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds 
     
     
-    if profile.accuracy > 50 and profile.quesno > 3 and profile.lifeline3_status == False and profile.lifeline3_used == False:
+    if profile.accuracy > 50 and profile.quesno > 2 and profile.lifeline3_status == False and profile.lifeline3_used == False:
         profile.lifeline3_status = True
     
-    if profile.lifeline1_count == 3 and profile.lifeline1_using == False:
-        print("In here qid generation")
-        profile.lifeline1_status = True
-        currQueslist = EasyQuestion.objects.all()
-        profile.lifeline1_question_id = (random.randrange(len(currQueslist)))
-        print("EASY QID: ", profile.lifeline1_question_id)
-        profile.save()
     
     if profile.isFirstTry == False :
         context["resp1"] = User_Response.objects.get(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).response1
@@ -306,6 +428,7 @@ def QuestionView(request):
                         profile.lifeline2_status = False
                         print("Timer Up")
                         profile.remainingTime += 300
+                        profile.lifeline2_secondattempt = False
                     profile.correctanswers += 1
                     
                     profile.marks += 4
@@ -322,11 +445,13 @@ def QuestionView(request):
                     if profile.lifeline2_status and profile.lifeline2_checked == False:                    
                         print("Timer Down")
                         profile.remainingTime -= 120 
+                        profile.lifeline2_secondattempt = True
 
                     profile.plusmrks = 2
                     profile.minusmrks = -2   
                     print("toggle in first response")
                     profile.isFirstTry = False  
+                    profile.save()
 
         elif profile.isFirstTry == False:
 
@@ -343,6 +468,7 @@ def QuestionView(request):
                     profile.lifeline2_status = False
                     print("Timer Up")
                     profile.remainingTime += 300
+                    profile.lifeline2_secondattempt = False
                 profile.marks += 2
                 profile.correctanswers += 1
 
@@ -352,6 +478,7 @@ def QuestionView(request):
                     profile.lifeline2_status = False
                     print("Timer Down")
                     profile.remainingTime -= 180
+                    profile.lifeline2_secondattempt = False
                 profile.marks -= 2
 
             
@@ -368,12 +495,10 @@ def QuestionView(request):
         # return redirect(QuestionView)
     
     # Calculate rank
-
-    ruser = request.user
-    profile = Profile.objects.get(user = ruser)
-    context["users"] = list(Profile.objects.filter(category = profile.category).order_by('marks',"remainingTime").reverse())
+    context["users"] = list(Profile.objects.filter(category = bool(profile.category)).order_by('marks',"remainingTime").reverse())
     context["rank"] = context["users"].index(profile) + 1
     profile.user_rank = context["rank"]
+    print("context : ",context["users"])
     profile.save()
 
     return render(request, 'myapp_RC/question.html', context)
@@ -594,3 +719,10 @@ def savetimer(request) :
         profile.remainingTime = context["second1"]
         profile.save()
         return JsonResponse({'success':'True'})
+    
+
+def error_view(request, exception):
+    return render(request, 'myapp_RC/error.html')
+
+def error_500(request):
+    return render(request, 'myapp_RC/error.html')

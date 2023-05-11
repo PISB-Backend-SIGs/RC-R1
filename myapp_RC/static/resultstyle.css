@@ -1,7 +1,8 @@
 body{
     background-image: linear-gradient(11deg, #000000 -76%, #2c3e50 280%);
     color: white;
-    height: 100vh;
+    min-height: 100vh;
+    height:100%;
     /* background-image: linear-gradient(11deg, #000000 -76%, #26486a 280%); */
     /* color: #fd794f; */
 }
@@ -27,7 +28,8 @@ overflow: hidden;
 }
 
 .Navbar2{
-height: 70px;
+/* height: 70px; */
+padding: 14px;
 background-image: linear-gradient(11deg, #000000 -76%, #2c3e50 280%);
 }
 
@@ -92,15 +94,15 @@ padding: 15px 8px;
 
 .container{
     display: grid;
-    grid-template-rows: 15% 5% 55% 15% auto auto 10%;
+    grid-template-rows: 15% 1% 15% 15% auto 10%;
     grid-template-areas:             
     'navbar'
     '.'
     'scorecard'
     '.'
     'extra_items'
-    '.'
     'footer';
+    height: 100%;
     /* grid-gap: 10px; */
     /* background-image: linear-gradient(11deg, #000000 -76%, #2c3e50 280%);
     color: white; */
@@ -147,7 +149,7 @@ padding: 15px 8px;
     background-image: linear-gradient(11deg, #000000 -76%, #26486a 280%);
     /* margin: auto 5%; */
     /* padding: auto 2%; */
-    height: 25vh;
+    height: 20vh;
 }
 
 
@@ -278,9 +280,9 @@ padding: 15px 8px;
 .last{
     grid-area: footer;
     display: grid;   
-    padding-top: 80px;
+    padding-top: 30px;
     align-items: end;
-    padding-bottom: 20px;
+    /* padding-bottom: 20px; */
 }
 .spons{
     display: flex;
@@ -295,7 +297,9 @@ padding: 15px 8px;
     align-items: center;            
 }
 
-
+h1{
+    margin-bottom: 0.8rem;
+}
 
 .progress {
     display: grid;
@@ -360,13 +364,13 @@ padding: 15px 8px;
 
 @media only screen and (max-width: 500px){
     .container{
-    display: grid;
-    grid-template-rows: 15% 45% 55%;
-    grid-template-areas:             
-    'navbar'
-    'scorecard'
-    'extra_items';
-    grid-gap: 10px;
+        display: grid;
+        grid-template-rows: 15% 45% 55%;
+        grid-template-areas:             
+        'navbar'
+        'scorecard'
+        'extra_items';
+        grid-gap: 10px;
     }
     .navbar{
         grid-area: navbar;
@@ -589,8 +593,7 @@ flex-direction: row;
 position:absolute;
 background-image: linear-gradient(11deg, #000000 -76%, #2c3e50 280%);
 height: 55px;
-bottom:0;
-position: fixed;
+position: relative;
 margin-top: 20px;
 padding: 10px 0;
 }
@@ -603,18 +606,22 @@ margin-bottom: 0!important;
 }
  
 /* 1000px */
-        @media only screen and (max-width: 800px){
+        @media (min-width: 500px ) and (max-width: 800px){
             .container{
-            display: grid;
-            grid-template-rows: 15% 55% auto auto 10%;
-            grid-template-areas:             
-            'navbar'
-            'scorecard'
-            'extra_items'
-            '.'
-            'footer';
-            /* grid-gap: 10px; */
-        }
+                display: grid;
+                grid-template-rows: 15% 1% 15% 15% auto 10%;
+                grid-template-areas:             
+                'navbar'
+                '.'
+                'scorecard'
+                '.'
+                'extra_items'
+                'footer';
+                height: 100%;
+                /* grid-gap: 10px; */
+                /* background-image: linear-gradient(11deg, #000000 -76%, #2c3e50 280%);
+                color: white; */
+            }
             .navbar{
                 grid-area: navbar;
                 justify-content: center;
@@ -811,8 +818,8 @@ margin-bottom: 0!important;
             /* not responsive */
         .progress1 {
             display: grid;
-            width: 140px;
-            height: 180px;
+            width: 100px;
+            height: 140px;
             z-index: 0;
             justify-content: center;
             align-items: center;
