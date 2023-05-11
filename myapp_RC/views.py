@@ -343,7 +343,7 @@ def QuestionView(request):
     
     
     if profile.isFirstTry == False :
-        context["resp1"] = User_Response.objects.get(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).response1
+        context["resp1"] = User_Response.objects.filter(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).first().response1
     
     if profile.lifeline1_using == True:
         print("In here , lifeline1_using true")
@@ -456,7 +456,7 @@ def QuestionView(request):
         elif profile.isFirstTry == False:
 
             givenAns = request.POST["res2"]
-            tempSol = User_Response.objects.get(user = profile.user, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False)
+            tempSol = User_Response.objects.filter(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).first()
             tempSol.response2 = givenAns
             tempSol.save()
             profile.plusmrks = 4
