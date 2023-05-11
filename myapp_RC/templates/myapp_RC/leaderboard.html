@@ -20,9 +20,9 @@
     </p>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-      <!-- <a class="nav-item nav-link active" id="navlink" href="instructions.html">Instructions</a>
+    <a class="nav-item nav-link active" id="navlink" href="instructions.html">Instructions</a>
       <a class="nav-item nav-link active" id="navlink" href="question.html">MCQ page</a>
-      <a class="nav-item nav-link active " id="navlink" href="result.html">Result</a>
+        <!-- <a class="nav-item nav-link active " id="navlink" href="result.html">Result</a>
       <a class="nav-item nav-link active" id="navlink" href="Leaderboard.html">Leaderboard  </a>
       <a class="nav-item nav-link active" id="navlink" href="#">LogOut</a> -->
     </div>
@@ -40,7 +40,7 @@
             </div>
             <div class="tim">
               <p>Page Realoads In: </p>
-              <h2 class="timer1" id="countdown">00</h2>
+              <h2 class="timer1" id="counter">00</h2>
             </div>
           <!-- </div> -->
          </div>
@@ -86,25 +86,21 @@
   // table.columns.adjust().draw();
 
  
-</script>
-<script>
-  const startingMinutes = 10;
-  let time = startingMinutes * 60;
-  
-  const countdown = document.getElementById('countdown');
-  function updateCountdown(){
-    var seconds = 60;
-   seconds--;
-      // var minutes = Math.floor(time / 60);
-      // let seconds = 60;
-      // minutes = minutes < 10 ? '0' + minutes : minutes;
-      for(let i=0;i<seconds;i++){
-      seconds = seconds < 10 ? '0' + seconds : seconds;
-      document.getElementById('countdown').innerHTML = seconds; 
-      }
-      time--;  
+<!-- </script>
+<script> -->
+ var timeLeft = 30;
+var elem = document.getElementById('counter');
+
+var timerId = setInterval(countdown, 1000);
+
+function countdown() {
+  if (timeLeft == 0) {
+    clearTimeout(timerId);
+    // document.location.reload();
+  } else {
+    elem.innerHTML = timeLeft;
+    timeLeft--;
   }
-  updateCountdown();
-  setInterval(updateCountdown,1000);
+}
 </script>
 </html>
