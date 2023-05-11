@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    user_rank = models.IntegerField(default=1, null=True)
+    user_rank = models.IntegerField(default=0,null=True)
     questionIndexList = models.TextField(default="[-1]")
     correctanswers = models.IntegerField(default=0)
     quesno = models.IntegerField(default=1)

@@ -21,6 +21,6 @@ urlpatterns = [
     path('',include('myapp_RC.urls')),
 ]
 
-handler404 = 'myapp_RC.views.error_view'
-handler403 = 'myapp_RC.views.error_view'
+# handler404 = 'myapp_RC.views.error_view'
+# handler403 = 'myapp_RC.views.error_view'
 # handler500 = 'myapp_RC.views.error_view'

@@ -17,8 +17,8 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   </head>
-  <body>
-    <div class="mycontainer">
+  <body onmousedown='return false;' onselectstart='return false;'>
+    <div id = "test"   class="mycontainer">
       <nav class="navbar navbar-expand-lg navbar-dark ">
         <a href="#">
           <img src="{% static 'images/rclogo.png' %}" alt="RC" height="30px" width="40px">
@@ -26,7 +26,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
-          <button type="button" class="btn btn-info" id="instruct" data-bs-toggle="modal" data-bs-target="#lbModal">INSTRUCTIONS</button>
+          <button type="button" class="btn btn-info" id="instruct" data-bs-toggle="modal" data-bs-target="#inModal">INSTRUCTIONS</button>
           <button type="button" class="btn btn-info" id="instruct" data-bs-toggle="modal" data-bs-target="#lbModal">LEADERBOARD</button> 
           <button type="button" class="btn btn-info" id="instruct" data-bs-toggle="modal" data-bs-target="#STModal">SUBMIT TEST</button>
         </div>
@@ -35,7 +35,7 @@
   
       <!-- Body -->
       
-      <div class="columns">
+      <div onmousedown='return false;' onselectstart='return false;'class="columns">
         <div class="column1">
           <div class="c13">
             <table class="tb1">
@@ -79,14 +79,38 @@
           </div>
 
           <!-- LeaderBoard Modal -->
-          <div class="modal fade" id="lbModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
+          <div   class="modal fade" id="inModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
             <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="test" onmousedown='return false;' onselectstart='return false;'>
+                <div class="modal-body" id="test"  >
+                  <div class="container">
+                    <h3>Instruction</h3>
+                    <p  style=" color: white;text-align: left;"> 1. The reverse coding round will last for 30 minutes.<br>
+                      2. The answers are strictly in the form of integers.<br>
+                      3. Throughout this test, you'll be provided with three lifelines. You can use only a single lifeline for one question. These lifelines are described below.<br>
+                      4. Users are advised to code their solution in personal or external IDEs to compute the answer.</p>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="close" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+            </div>
+          </div>
+
+          <!-- LeaderBoard Modal -->
+          <div   class="modal fade" id="lbModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="test"  >
                   <div class="container">
                     <h3>Leaderboard</h3>
                     <table id="members" class="table table-bordered responsive-table order-column" style="border: none;">
@@ -96,19 +120,19 @@
                           <th style="text-align: center;">User</th>  
                           <th style="text-align: center;">Attempted Question</th>
                           <th style="text-align: center;">Marks</th>  
-                          <th style="text-align: center;">Remaining Time</th>
+                          <th style="text-align: center;">Accuracy</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        {% for userprofiles in users %}
+                      <tbody style="color: white;">
+                        {% for userprofiles in users|slice:":10" %}
                           <tr class="table-row">
-                                <td>{{ userprofiles.user_rank }}</td>  
+                                <th scope="row">{{ forloop.counter }}</th>
                                 <td>{{ userprofiles.user }}</td>  
                                 <td>{{ userprofiles.quesno }}</td>  
                                 <td>{{ userprofiles.marks }}</td>  
-                                <td>{{ userprofiles.remainingTime }}</td>  
+                                <td>{{ userprofiles.accuracy }}</td>  
                           </tr>
-                          {% endfor %}
+                        {% endfor %}
                         </tbody>
                       </table>
                   </div>
@@ -128,8 +152,8 @@
                 <h5 class="modal-title" id="exampleModalLabel">Second Chance</h5>
                 <!-- <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
-                <div class="modal-body" id="test" onmousedown='return false;' onselectstart='return false;'>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corrupti sequi eaque alias exercitationem cum a, cumque repellat libero. Exercitationem ex cumque beatae quod odit, atque reiciendis. Laborum nihil unde blanditiis nulla doloremque iusto earum ratione accusamus animi! Odio doloribus ea ipsam dicta quaerat veniam laboriosam odit ex, blanditiis cumque quos perferendis natus distinctio illo quo. Modi, architecto eius ipsam corrupti nesciunt eos, voluptate aperiam nisi doloribus amet quidem iusto quasi recusandae maiores laudantium sequi. Nobis error ipsam illo numquam dolorem nisi suscipit ab tempora! Consectetur voluptatem sit totam fugiat corrupti, asperiores iure. Dolorem architecto inventore exercitationem nobis, nisi perspiciatis esse.
+                <div class="modal-body" id="test"  >
+                  This lifeline allows contestants to substitute a seemingly difficult question with an easier one that is still related to the same category. The easier question will have a marking scheme of +4 marks for a correct response to this easy question and -4 marks for a wrong response.<br> Marking Scheme:<br>+4 marks for correct response;<br>-4 marks for wrong answer.</p>
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="close" data-bs-dismiss="modal">Close</button>
@@ -151,7 +175,7 @@
                 <!-- <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
                 <div class="modal-body" id="test" onmousedown='return false;' onselectstart='return false;'>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corrupti sequi eaque alias exercitationem cum a, cumque repellat libero. Exercitationem ex cumque beatae quod odit, atque reiciendis. Laborum nihil unde blanditiis nulla doloremque iusto earum ratione accusamus animi! Odio doloribus ea ipsam dicta quaerat veniam laboriosam odit ex, blanditiis cumque quos perferendis natus distinctio illo quo. Modi, architecto eius ipsam corrupti nesciunt eos, voluptate aperiam nisi doloribus amet quidem iusto quasi recusandae maiores laudantium sequi. Nobis error ipsam illo numquam dolorem nisi suscipit ab tempora! Consectetur voluptatem sit totam fugiat corrupti, asperiores iure. Dolorem architecto inventore exercitationem nobis, nisi perspiciatis esse.
+                This lifeline gives you the advantage of having additional time if you answer questions correctly. If you choose to use it, time will be added to the total test time, giving you more time to answer future questions. This lifeline can only be used once per contestant. For the first response, you get an additional benefit of 5 minutes if you answer the question correctly, but you lose 2 minutes in the case of a wrong response. If you answer it correctly in the second attempt, you get an additional 3 minutes, but you lose another 3 minutes if you give the wrong response.<br><br>Timer Scheme: <br> For first response -> <br> +5 min for correct response<br>-2 min for wrong response<br>For second response -> <br> +3 min for correct response<br>-3 min for wrong response<br>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" id="close" data-bs-dismiss="modal">Close</button>
@@ -182,7 +206,7 @@
                 <button id="my-button" onclick="lifeline3Fun()" ><icon id="sent"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="cyan" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </icon></button>
                 </div>
-                <div class="chatresponse">
+                <div id = 'test' onmousedown='return false;' onselectstart='return false;' class="chatresponse">
                   <icon><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
                     width="44" height="44"
                     viewBox="0,0,256,256"
@@ -208,8 +232,8 @@
                 <h5 class="modal-title" id="exampleModalLabel"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="test" onmousedown='return false;' onselectstart='return false;'>
-                Do you really want to end this test
+                <div class="modal-body" id="test"  >
+                Do you really want to end this test?
                 </div >
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="close" data-bs-dismiss="modal">Close</button>
@@ -223,8 +247,10 @@
 
           <div class="c12">
             <p>Lifelines</p>
-            {% if profile.lifeline1_using or lifeline2_secondattempt %}
+            {% if profile.lifeline1_using %}
             <button type="button" class="btn btn-info " data-bs-toggle="modal"  id="lf5" data-bs-target="#L1Modal" disabled>Activated</button>
+            {% elif profile.lifeline2_status %}
+            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal" disabled>Lifeline1</button>
             {% elif profile.lifeline1_status %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal">Lifeline1</button>
             {% else %}
@@ -234,11 +260,14 @@
             {% if profile.lifeline1_using %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal" disabled>Lifeline2</button>
             {% elif profile.lifeline2_superstatus %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal">Lifeline2</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal"><span style="position: absolute; top: 0; right: 0; bottom: 0; background-color: aqua; animation: timer 30s linear forwards;"></span>Lifeline2</button>
+            {% elif profile.lifeline2_status %}
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf6" data-bs-target="#L2Modal" disabled>Activated</button>
+            {% else %}
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal" disabled>Lifeline2</button>
             {% endif %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf6" data-bs-target="#L2Modal" disabled hi>Activated</button>
 
-            {% if profile.lifeline1_using or lifeline2_secondattempt %}
+            {% if profile.lifeline1_using or profile.lifeline2_status %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf3" data-bs-target="#L3Modal" disabled>Lifeline3</button>
             {% elif profile.lifeline3_status %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf3" data-bs-target="#L3Modal">Lifeline3</button>
@@ -257,7 +286,7 @@
           <div class="queshead">       
             <h2 class="qh">Question No. {{ profile.quesno }}</h2>            
           </div>
-          <div class="question" id="test" onmousedown='return false;' onselectstart='return false;'>
+          <div class="question" id="test"  >
             <p>{{ currquest }}</p>
           </div>
           {% if profile.isFirstTry%}
@@ -268,7 +297,7 @@
               </div>
               <div class="opt2">
                 Response 2 :
-                <input type="number" name="res2" class="res2" id="res2" disabled>
+                <input type="number" name="res2" class="res2" id="res2" placeholder="Enter response 1 first" disabled>
               </div>
             </div>
             <div class="sub">
@@ -296,7 +325,7 @@
         </form>
       </div>
       <!-- Footer goes here -->
-      <div class="footer" >
+      <div id = "test" onmousedown='return false;' onselectstart='return false;' class="footer" >
         <footer>
             <p class="footertext">©PISB</p>
         </footer>
@@ -353,9 +382,6 @@
 
       function disablenewInput(){
       document.getElementById('L2Modal').style.display = "none";
-      document.getElementById('lf6').style.display = "block";
-      document.getElementById('lf6').disabled = true;
-      document.getElementById('lf2').style.display = "none";
       }
 
       function disable13(){
@@ -379,26 +405,8 @@
             }
         });
     }
-    </script>
-<script>
-  var testduration=60*30;
-  var timer = setTimeout(function() {
-    $.ajax({
-        url: '/endExam/',
-        type: 'POST',
-        data: {
-            test_id: testId
-        },
-        success: function(response) {
-            
-        },
-        error: function(xhr, status, error) {
-            
-        }
-    });
-}, examDuration * 1000);
-
 </script>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
 
@@ -423,7 +431,7 @@ const button = document.getElementById('myButton');
             
             var minutes = Math.floor(seconds / 60);
             var remainingSeconds = seconds % 60;
-            if (remainingSeconds <=0 && minutes <=0){
+            if (remainingSeconds <=0 && minutes <=0 || minutes >=36 ){
               console.log("Idhar")
               const int_input = document.querySelectorAll('input[type = "number"]');
               int_input.forEach((variable) =>{
@@ -461,6 +469,17 @@ const button = document.getElementById('myButton');
   }
   // Call the savetimer() function every 5 seconds
   setInterval(savetimer, 5000);
+</script>
+
+<script>
+  // Get the button element
+var buttonn = document.getElementById('lf2');
+
+// Disable the button after 30 seconds
+setTimeout(function() {
+  buttonn.disabled = true;
+}, 30000);
+
 </script>
 
     </div>      

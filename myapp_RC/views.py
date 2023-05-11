@@ -155,7 +155,6 @@ def signin(request):
                 # if profile.newlogin == False :
                 #     profile.newlogin = True
                 # else :
-                #     messages.error(request, "Already Logged in via other device")
                 #     return render(request, 'myapp_RC/signin.html', context)
                 profile.save()
                 # =====================
@@ -284,7 +283,8 @@ def QuestionView(request):
     context['plusmrks'] = 4
     context['minusmrks'] = 0
     context["profile"] = profile
-
+    context["users"] = list(Profile.objects.filter(category = bool(profile.category)).order_by('marks',"accuracy").reverse())
+    print("lb :",context["users"])
     if profile.lifeline1_count == 3 and profile.lifeline1_using == False:
         print("In here qid generation")
         profile.lifeline1_status = True
@@ -329,11 +329,9 @@ def QuestionView(request):
             context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
             return render(request, 'myapp_RC/question.html',context)
         
-    if profile.quesno == 1:
         profile.accuracy = (profile.correctanswers/(profile.quesno))*100
-    else:
-        profile.accuracy = (profile.correctanswers/(profile.quesno-1))*100
-    print("Accuracy: ", profile.accuracy, "%")
+
+    profile.save()
 
     context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds 
     
@@ -367,6 +365,7 @@ def QuestionView(request):
 
         if str(givenAns) == str(currQuest.easyanswer):
             profile.marks += 4
+            profile.correctanswers+=1
         else:
             profile.marks -= 4
         
@@ -487,43 +486,56 @@ def QuestionView(request):
             qList = eval(profile.questionIndexList)
             profile.questionIndexList = str(qList[1:])
             print("second now qlist = ", profile.questionIndexList)
-            
+        
+        
+        
+        
         profile.save()
         # print("Profile Saved")
         request.method = "GET"
         return QuestionView(request)
         # return redirect(QuestionView)
     
-    # Calculate rank
-    context["users"] = list(Profile.objects.filter(category = bool(profile.category)).order_by('marks',"remainingTime").reverse())
-    context["rank"] = context["users"].index(profile) + 1
-    profile.user_rank = context["rank"]
-    print("context : ",context["users"])
-    profile.save()
 
     return render(request, 'myapp_RC/question.html', context)
 
 def leaderboard(request) :
     context = {}
     context["usersjunior"] = list(Profile.objects.filter(category = True).order_by('marks',"remainingTime").reverse())
+
     context["userssenior"] = list(Profile.objects.filter(category = False).order_by('marks',"remainingTime").reverse())
-    context["users"] = list(Profile.objects.filter(category = True).order_by('marks',"remainingTime").reverse())
+    # context["users"] = list(Profile.objects.filter(category = True).order_by('marks',"remainingTime").reverse())
     return render(request, 'myapp_RC/leaderboard.html', context)
 
-@login_required(login_url = 'SignIn')
+@login_required(login_url='SignIn')
 def result(request):
-    try :
+    try:
         context = {}
         ruser = request.user
-        profile = Profile.objects.get(user = ruser)
+        profile = Profile.objects.get(user=ruser)
         context["profile"] = profile
-        context["users"] = list(Profile.objects.all().order_by('marks',"remainingTime").reverse())
+        context["users"] = list(Profile.objects.all().order_by(
+            'marks', 'remainingTime').reverse())
         context["rank"] = context["users"].index(profile) + 1
         profile.logoutTime = datetime.datetime.now()
+        # context["q_correct"] = profile.accuracy
+        # context["q_correct"] = round(
+        #     ((profile.correctanswers)/(profile.quesno-1))*100, 2)
+        # if profile.quesno == 1:
+        profile.accuracy = round((profile.correctanswers/(profile.quesno))*100,2)
+        # else:
+        #     profile.accuracy = round((
+        #         profile.correctanswers/(profile.quesno-1))*100)
+        print("Accuracy: ", profile.accuracy, "%")
         context["q_correct"] = profile.accuracy
-        context["timetaken"] = round(((1800 - profile.remainingTime)/1800) * 100,2)
+        if profile.remainingTime >= 2300:
+            profile.remainingTime = 0
+        context["timetaken"] = round(
+            ((1800 - profile.remainingTime)/1800) * 100, 2)
         context["totalques"] = profile.quesno - 1
-    except :
+        profile.save()
+        # logout(request)
+    except:
         return redirect('SignIn')
 
     return render(request, 'myapp_RC/result.html', context)
@@ -720,9 +732,8 @@ def savetimer(request) :
         profile.save()
         return JsonResponse({'success':'True'})
     
+# def error_view(request, exception):
+#     return render(request, 'myapp_RC/error.html')
 
-def error_view(request, exception):
-    return render(request, 'myapp_RC/error.html')
-
-def error_500(request):
-    return render(request, 'myapp_RC/error.html')
+# def error_500(request):
+#     return render(request, 'myapp_RC/error.html')

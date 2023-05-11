@@ -865,3 +865,8 @@
         width: 300px;
     }
   }
+
+.res2:disabled{
+    content: Submit Response 1!important;
+    border: none;
+}

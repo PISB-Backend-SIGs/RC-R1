@@ -21,7 +21,7 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
     <a class="nav-item nav-link active" id="navlink" href="instructions.html">Instructions</a>
-      <a class="nav-item nav-link active" id="navlink" href="question.html">MCQ page</a>
+      <a class="nav-item nav-link active" id="navlink" href="{% url 'SignIn' %}">Sign In</a>
         <!-- <a class="nav-item nav-link active " id="navlink" href="result.html">Result</a>
       <a class="nav-item nav-link active" id="navlink" href="Leaderboard.html">Leaderboard  </a>
       <a class="nav-item nav-link active" id="navlink" href="#">LogOut</a> -->
@@ -45,40 +45,54 @@
             </div>
           <!-- </div> -->
          </div>
-
-        <table id = "members" class = "table table-bordered responsive-table order-column" style="border: none;">
+        <div id="juniors">
+        <table class = "table table-bordered responsive-table order-column" style="border: none;">
           <thead>
               <tr class="table-header">
                   <th style="text-align: center;" >Rank</th>  
                   <th style="text-align: center;" >User</th>  
                   <th style="text-align: center;" >Attempted Question</th>
                   <th style="text-align: center;">Marks</th>  
-                  <th style="text-align: center;">remainingTime</th>
+                  <th style="text-align: center;">Accuracy</th>
               </tr>
           </thead>
-          <tbody id="juniors">
-          {% for userprofiles in usersj %}
+          <tbody>
+          {% for userprofiles in usersjunior %}
               <tr class="table-row">
-                  <td>{{ userprofiles.user_rank }}</td>  
+                <th scope="row">{{ forloop.counter }}</th>
                   <td>{{ userprofiles.user }}</td>  
                   <td>{{ userprofiles.quesno }}</td>  
                   <td>{{ userprofiles.marks }}</td>  
-                  <td>{{ userprofiles.remainingTime }}</td>  
+                  <td>{{ userprofiles.accuracy }}</td>  
               </tr>
           {% endfor %}
           </tbody>
-          <tbody id="seniors">
-            {% for userprofiles in userss %}
+        </table>
+        </div>
+        <div id="seniors">
+        <table class = "table table-bordered responsive-table order-column" style="border: none;">
+          <thead>
+              <tr class="table-header">
+                  <th style="text-align: center;" >Rank</th>  
+                  <th style="text-align: center;" >User</th>  
+                  <th style="text-align: center;" >Attempted Question</th>
+                  <th style="text-align: center;">Marks</th>  
+                  <th style="text-align: center;">Accuracy</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for userprofiles in userssenior %}
                 <tr class="table-row">
-                    <td>{{ userprofiles.user_rank }}</td>  
+                    <th scope="row">{{ forloop.counter }}</th> 
                     <td>{{ userprofiles.user }}</td>  
                     <td>{{ userprofiles.quesno }}</td>  
                     <td>{{ userprofiles.marks }}</td>  
-                    <td>{{ userprofiles.remainingTime }}</td>  
+                    <td>{{ userprofiles.accuracy }}</td>  
                 </tr>
             {% endfor %}
             </tbody>
-      </table>
+        </table>
+      </div>
       </div>
       </div>
     
@@ -109,7 +123,7 @@ var timerId = setInterval(countdown, 1000);
 function countdown() {
   if (timeLeft == 0) {
     clearTimeout(timerId);
-    // document.location.reload();
+    window.location.reload();
   } else {
     elem.innerHTML = timeLeft;
     timeLeft--;
