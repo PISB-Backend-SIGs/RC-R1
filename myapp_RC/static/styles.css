@@ -870,3 +870,8 @@
     content: Submit Response 1!important;
     border: none;
 }
+
+@keyframes fadeOut {
+    0% { background-color: aqua; }
+    100% { background-color: transparent; }
+  }

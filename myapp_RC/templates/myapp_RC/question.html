@@ -150,7 +150,7 @@
             <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Second Chance</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Universal Substitute</h5>
                 <!-- <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
                 <div class="modal-body" id="test"  >
@@ -172,7 +172,7 @@
             <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Lucky Gamble</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Time Warp</h5>
                 <!-- <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
                 <div class="modal-body" id="test" onmousedown='return false;' onselectstart='return false;'>
@@ -193,7 +193,7 @@
             <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel" onmousedown='return false;' onselectstart='return false;'>Ask GPT-5</h5>
+                <h5 class="modal-title" id="exampleModalLabel" onmousedown='return false;' onselectstart='return false;'>Galactic Guidance</h5>
                 <!-- <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
                 <div class="modal-body">
@@ -216,7 +216,7 @@
                     </svg></icon>
                   <p id="answerParagraph">
                     * Chat GPT response will be displayed here *
-
+                    <br><br>
                     This lifeline allows contestants to ask ChatGPT, the virtual assistant, for guidance and advice when unsure about the answer to a question. This lifeline can only be used after the contestant has answered three consecutive questions correctly. If they choose to use it, the marking scheme for that particular question will be adjusted to +4 for a correct answer and -4 for an incorrect answer, encouraging the contestant to use this lifeline wisely and at the right moment.
                   </p>
                 </div>
@@ -253,29 +253,29 @@
             {% if profile.lifeline1_using %}
             <button type="button" class="btn btn-info " data-bs-toggle="modal"  id="lf5" data-bs-target="#L1Modal" disabled>Activated</button>
             {% elif profile.lifeline2_status %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal" disabled>Lifeline1</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal" disabled>Universal Substitute</button>
             {% elif profile.lifeline1_status %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal">Lifeline1</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal">Universal Substitute</button>
             {% else %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal" disabled>Lifeline1</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal" disabled>Universal Substitute</button>
             {% endif %}            
             
             {% if profile.lifeline1_using %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal" disabled>Lifeline2</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal" disabled>Time Warp</button>
             {% elif profile.lifeline2_superstatus %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal">Lifeline2</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal" style="animation: fadeout 30s linear;">Time Warp</button>
             {% elif profile.lifeline2_status %}
             <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf6" data-bs-target="#L2Modal" disabled>Activated</button>
             {% else %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal" disabled>Lifeline2</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf2" data-bs-target="#L2Modal" disabled>Time Warp</button>
             {% endif %}
 
             {% if profile.lifeline1_using or profile.lifeline2_status %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf3" data-bs-target="#L3Modal" disabled>Lifeline3</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf3" data-bs-target="#L3Modal" disabled>Galactic Guidance</button>
             {% elif profile.lifeline3_status %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf3" data-bs-target="#L3Modal">Lifeline3</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf3" data-bs-target="#L3Modal">Galactic Guidance</button>
             {% else %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf3" data-bs-target="#L3Modal" disabled>Lifeline3</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" id="lf3" data-bs-target="#L3Modal" disabled>Galactic Guidance</button>
             {% endif %}
           </div>
 
