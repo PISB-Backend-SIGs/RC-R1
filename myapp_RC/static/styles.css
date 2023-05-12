@@ -872,6 +872,6 @@
 }
 
 @keyframes fadeOut {
-    0% { background-color: aqua; }
-    100% { background-color: transparent; }
+    from { background-color: aqua; background-size: 100%; }
+    to { background-color: transparent; background-size: 100%;}
   }
