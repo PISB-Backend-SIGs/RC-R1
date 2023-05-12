@@ -40,6 +40,7 @@ class Profile(models.Model):
     lifeline1_question_id = models.IntegerField(default=0)
 
     lifeline2_superstatus = models.BooleanField(default = True)
+    lifeline2_timeout = models.BooleanField(default = False)
     lifeline2_status = models.BooleanField(default = False)
     lifeline2_checked = models.BooleanField(default = False)
     lifeline2_secondattempt = models.BooleanField(default = False)

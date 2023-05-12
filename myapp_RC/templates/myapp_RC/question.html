@@ -37,7 +37,7 @@
       <!-- Body -->
       
       <div class="columns">
-        <div class="column1" onmousedown='return false;' onselectstart='return false;'>
+        <div class="column1">
           <div class="c13">
             <table class="tb1">
               <thead id="tb1">
@@ -79,8 +79,8 @@
             <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#lbModal">LEADERBOARD</button> -->
           </div>
 
-          <!-- LeaderBoard Modal -->
-          <div   class="modal fade" id="inModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
+          <!-- Instruction Modal -->
+          <div onmousedown='return false;' onselectstart='return false;' class="modal fade" id="inModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
             <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
@@ -104,7 +104,7 @@
           </div>
 
           <!-- LeaderBoard Modal -->
-          <div   class="modal fade" id="lbModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
+          <div  onmousedown='return false;' onselectstart='return false;' class="modal fade" id="lbModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
             <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
@@ -146,11 +146,11 @@
           </div>
           
           <!-- Lifeline1 Modal -->
-          <div class="modal fade" id="L1Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
+          <div  onmousedown='return false;' onselectstart='return false;' class="modal fade" id="L1Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
             <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Universal Substitute</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Astro Sub</h5>
                 <!-- <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
                 <div class="modal-body" id="test"  >
@@ -168,7 +168,7 @@
           </div>
           
           <!-- Lifeline2 Modal -->
-          <div class="modal fade" id="L2Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
+          <div  onmousedown='return false;' onselectstart='return false;' class="modal fade" id="L2Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: black;">
             <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -253,11 +253,11 @@
             {% if profile.lifeline1_using %}
             <button type="button" class="btn btn-info " data-bs-toggle="modal"  id="lf5" data-bs-target="#L1Modal" disabled>Activated</button>
             {% elif profile.lifeline2_status %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal" disabled >Universal Substitute</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal" disabled >Astro Sub</button>
             {% elif profile.lifeline1_status %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal">Universal Substitute</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal">Astro Sub</button>
             {% else %}
-            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal" disabled >Universal Substitute</button>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal"  id="lf1" data-bs-target="#L1Modal" disabled >Astro Sub</button>
             {% endif %}            
             
             {% if profile.lifeline1_using %}
@@ -481,8 +481,12 @@ var buttonn = document.getElementById('lf2');
 // Disable the button after 30 seconds
 setTimeout(function() {
   buttonn.disabled = true;
+  // Magic code here!
 }, 30000);
 
+setInterval(function() {
+  console.log("hello friend");
+}, 2000);
 </script>
 
     </div>      

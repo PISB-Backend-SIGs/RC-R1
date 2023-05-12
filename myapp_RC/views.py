@@ -64,7 +64,7 @@ def signup(request):
 
             messages.success(request, "Your account has been successfully created!")
             return redirect('/signin')   # to redirect the user to the signin page once the successful registration messages is displayed
-        return redirect('/signup')
+        return redirect('/gquwa12evrat')
     return render(request, "myapp_RC/signup.html")
 
 def signin1(request):
@@ -167,7 +167,7 @@ def signin(request):
                 data = {
                     'username': username,
                     'password': pass1,
-                    'event': 'clash',
+                    'event': 'rc',
                 }
                 
                 if isTeam:
@@ -726,7 +726,7 @@ def savetimer(request) :
         context = {}
         ruser = request.user
         profile = Profile.objects.get(user = ruser)
-        context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds 
+        context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
         profile.startTime = datetime.datetime.now()
         profile.remainingTime = context["second1"]
         profile.save()
