@@ -329,7 +329,7 @@ def QuestionView(request):
             context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
             return render(request, 'myapp_RC/question.html',context)
         
-        profile.accuracy = (profile.correctanswers/(profile.quesno))*100
+    profile.accuracy = (profile.correctanswers/(profile.quesno))*100
 
     profile.save()
 
