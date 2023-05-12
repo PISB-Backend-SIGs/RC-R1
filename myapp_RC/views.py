@@ -152,10 +152,10 @@ def signin(request):
                 queIndex = queIndex[:11]
 
                 profile.questionIndexList = str(queIndex)
-                # if profile.newlogin == False :
-                #     profile.newlogin = True
-                # else :
-                #     return render(request, 'myapp_RC/signin.html', context)
+                if profile.newlogin == False :
+                    profile.newlogin = True
+                else :
+                    return render(request, 'myapp_RC/signin.html')
                 profile.save()
                 # =====================
                 return redirect('Instruction')
@@ -534,7 +534,7 @@ def result(request):
             ((1800 - profile.remainingTime)/1800) * 100, 2)
         context["totalques"] = profile.quesno - 1
         profile.save()
-        # logout(request)
+        logout(request)
     except:
         return redirect('SignIn')
 
