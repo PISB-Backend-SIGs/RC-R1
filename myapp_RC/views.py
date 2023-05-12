@@ -706,7 +706,7 @@ def webadmin(request) :
         if superuser.is_superuser and user is not None:
             profile = Profile.objects.get(user = user)
             profile.remainingTime += int(request.POST['tabs'])
-
+            profile.newlogin = False
             profile.save()
 
             messages.success(request, "Updated")
@@ -732,8 +732,8 @@ def savetimer(request) :
         profile.save()
         return JsonResponse({'success':'True'})
     
-# def error_view(request, exception):
-#     return render(request, 'myapp_RC/error.html')
+def error_view(request, exception):
+    return render(request, 'myapp_RC/error.html')
 
-# def error_500(request):
-#     return render(request, 'myapp_RC/error.html')
+def error_500(request):
+    return render(request, 'myapp_RC/error.html')
