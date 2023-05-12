@@ -13,6 +13,7 @@ class Profile(models.Model):
     minusmrks = models.IntegerField(default = 0)
     # res1notnull=models.BooleanField(default=False)
     # cur
+    display_name = models.CharField(max_length=1000, default="", null=True)
 
     marks = models.IntegerField(default=0)
     accuracy = models.FloatField(default=0)

@@ -93,7 +93,7 @@ def signin1(request):
                 queIndex = [q.id for q in allQues]
                 random.shuffle(queIndex)
 
-                queIndex = queIndex[:11]
+                queIndex = queIndex[:30]
 
                 profile.questionIndexList = str(queIndex)
                 if profile.newlogin == False :
@@ -149,7 +149,7 @@ def signin(request):
                 queIndex = [q.id for q in allQues]
                 random.shuffle(queIndex)
 
-                queIndex = queIndex[:11]
+                queIndex = queIndex[:30]
 
                 profile.questionIndexList = str(queIndex)
                 if profile.newlogin == False :
@@ -187,6 +187,7 @@ def signin(request):
                         try:
                             category = not response['user']['senior']
                             first_name = response['user']['first_name']
+                            display_name = first_name
                             last_name = response['user']['last_name']
                         except:
                             messages.error(request, "Invalid Credentials")
@@ -203,19 +204,19 @@ def signin(request):
                             if user1['senior']:
                                 category = False
                         display_name = display_name[:-2]
-                        print(display_name)
+                        print("display name :",display_name)
                     profile = Profile(user=user, category=category)
                     profile.save()
                     if profile.category == False:   # True for Junior
                         allQues = Question.objects.filter(is_junior = True)
                     else:   #False for Senior
                         allQues = Question.objects.filter(is_junior = False)
-                
 
+                    profile.display_name = display_name  # Name is not getting stored
                     queIndex = [q.id for q in allQues]
                     random.shuffle(queIndex)
 
-                    queIndex = queIndex[:11]
+                    queIndex = queIndex[:30]
 
                     profile.questionIndexList = str(queIndex)
                     profile.save()      
@@ -283,7 +284,7 @@ def QuestionView(request):
     context['plusmrks'] = 4
     context['minusmrks'] = 0
     context["profile"] = profile
-    context["users"] = list(Profile.objects.filter(category = bool(profile.category)).order_by('marks',"accuracy").reverse())
+    context["users"] = list(Profile.objects.filter(category = bool(profile.category)).order_by('marks',"accuracy","remainingTime").reverse())
     print("lb :",context["users"])
     if profile.lifeline1_count == 3 and profile.lifeline1_using == False:
         print("In here qid generation")
@@ -329,16 +330,15 @@ def QuestionView(request):
             context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds
             return render(request, 'myapp_RC/question.html',context)
         
-    profile.accuracy = (profile.correctanswers/(profile.quesno))*100
+    profile.accuracy = round((profile.correctanswers/(profile.quesno))*100,2)
 
     profile.save()
 
     context["second1"] = (datetime.timedelta(seconds = profile.remainingTime) -(datetime.datetime.now() - datetime.datetime.fromisoformat(str(profile.startTime)).replace(tzinfo=None))).seconds 
     
     
-    if profile.accuracy > 50 and profile.quesno > 2 and profile.lifeline3_status == False and profile.lifeline3_used == False:
+    if  profile.quesno > 1 and profile.lifeline3_status == False and profile.lifeline3_used == False:
         profile.lifeline3_status = True
-    
     
     if profile.isFirstTry == False :
         context["resp1"] = User_Response.objects.filter(user = ruser, user_profile = profile, quetionID = qList[0], isSimpleQuestion = False).first().response1
@@ -390,7 +390,7 @@ def QuestionView(request):
         # context['profile'] =  profile
         return QuestionView(request)
 
-    if profile.quesno == 11 or profile.remainingTime == 0:
+    if profile.quesno == 30 or profile.remainingTime == 0:
         profile.logoutTime = datetime.datetime.now()
         profile.save()
         return redirect('Result')
@@ -471,6 +471,9 @@ def QuestionView(request):
                 profile.marks += 2
                 profile.correctanswers += 1
 
+                if profile.lifeline1_count < 3 :
+                        profile.lifeline1_count += 1
+
             else:
                 if profile.lifeline2_status and profile.lifeline2_checked == False:
                     profile.lifeline2_checked = True
@@ -501,9 +504,9 @@ def QuestionView(request):
 
 def leaderboard(request) :
     context = {}
-    context["usersjunior"] = list(Profile.objects.filter(category = True).order_by('marks',"remainingTime").reverse())
+    context["usersjunior"] = list(Profile.objects.filter(category = True).order_by('marks',"remainingTime","accuracy").reverse())
 
-    context["userssenior"] = list(Profile.objects.filter(category = False).order_by('marks',"remainingTime").reverse())
+    context["userssenior"] = list(Profile.objects.filter(category = False).order_by('marks',"remainingTime", "accuracy").reverse())
     # context["users"] = list(Profile.objects.filter(category = True).order_by('marks',"remainingTime").reverse())
     return render(request, 'myapp_RC/leaderboard.html', context)
 
@@ -514,9 +517,8 @@ def result(request):
         ruser = request.user
         profile = Profile.objects.get(user=ruser)
         context["profile"] = profile
-        context["users"] = list(Profile.objects.all().order_by(
-            'marks', 'remainingTime').reverse())
-        context["rank"] = context["users"].index(profile) + 1
+        context["users"] = list(Profile.objects.filter(category = bool(profile.category)).order_by('marks', 'remainingTime',"accuracy").reverse())
+        profile.user_rank = context["users"].index(profile) + 1
         profile.logoutTime = datetime.datetime.now()
         # context["q_correct"] = profile.accuracy
         # context["q_correct"] = round(
@@ -580,7 +582,7 @@ def lifelineone(request):
     profile.startTime = datetime.datetime.now()
     profile.remainingTime = context["second1"]
        
-    if profile.quesno == 11 or profile.remainingTime == 0 :
+    if profile.quesno == 30 or profile.remainingTime == 0 :
         profile.logoutTime = datetime.datetime.now()
         profile.save()
         return redirect('Result')

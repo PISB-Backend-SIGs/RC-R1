@@ -23,10 +23,14 @@ BASE_DIR = Path(os.path.abspath(__file__)).resolve().parent.parent
 SECRET_KEY = 'django-insecure-pq^7=d@iesx^0*0hf220a(q070j!m=lm4be(c^(+0*lbexnvhi'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+
+DEBUG = False # Set to true to view css on the local server while making changes. CHANGE BACK to False while deployment
 
 CSRF_TRUSTED_ORIGINS = ['https://rc.credenz.in','https://*.credenz.in']
-ALLOWED_HOSTS = ['rc.credenz.in', '20.1.201.47']
+
+ALLOWED_HOSTS = ['rc.credenz.in', '20.1.201.47']   # Use this line during deployment of the website. Comment out the below line during the same.
+
+# ALLOWED_HOSTS = ['rc.credenz.in', '20.1.201.47', '*']  #Changes made to run the server on localhost. Comment out this line while deployment
 
 
 # Application definition
@@ -52,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+# APPEND_SLASH=False
 
 CACHE_MIDDLEWARE_ALIAS = 'default'
 CACHE_MIDDLEWARE_SECONDS = 60 * 5
